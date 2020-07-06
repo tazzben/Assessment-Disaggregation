@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
+    
+    <link type="text/css" rel="stylesheet" href="./css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="./css.css" />
+    <title>Assessment Disaggregation</title>
+    <meta name="theme-color" content="#563d7c">
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      main > .container {
+        padding: 60px 15px 0;
+      }
+
+      .footer {
+        background-color: #f5f5f5;
+      }
+      footer {
+        position: absolute;
+        bottom: 0;
+        height: 3em;
+        width: 100%;
+      }
+
+      .footer > .container {
+        padding-right: 15px;
+        padding-left: 15px;
+        padding-top: 0.5em;
+        text-align: right;
+        color:#f5f5f5;
+    }
+    .percentNumber{
+      font-size: 2em;
+      height: 3em;
+      width: 3em;
+      text-align: center;
+      vertical-align: bottom;
+      color: #f5f5f5;
+    }
+    .percentNumber > span {
+      display:block;
+      margin-top: auto;
+      margin-bottom: auto;
+      padding-top: 25%;
+      padding-bottom: 25%;
+    }
+    code {
+      font-size: 80%;
+    }
+    </style>
+  </head>
+  <body >
+
+    <header>
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand">Assessment Disaggregation</a>
+      </nav>
+    </header>
+   
+    <main class="container">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm">
+            <div class="card" >
+              <div class="card-body">
+                <h5 class="card-title">Required Files</h5>
+                <p class="card-text">To perform this disaggregation, you must specify a pretest and posttest with some set of matched questions.  Standard Scantron, Akindi, QuickKey, ZipGrade, and Canvas formatted files can be specified.  For more information about the exam file formats, please see the help menu for the documentation.</p>
+                <div class="btn-group" role="group" aria-label="Exam Fils">
+                  <button type="button" class="btn btn-secondary" id="pretest">Pretest</button>
+                  <button type="button" class="btn btn-secondary" id="posttest">Posttest</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm">
+            <div class="card" >
+              <div class="card-body">
+                <h5 class="card-title">Optional Files</h5>
+                <p class="card-text">The assessment map is optional but recommended. This file's columns are "q" (assessment question number in output), "exam1" (pretest question number), "exam2" (posttest question number), and "options" (number of answer options for the given question).  Student list limits the students used for the analysis using a singular column: id.</p>
+                <div class="btn-group" role="group" aria-label="Optional Files">
+                  <button type="button" class="btn btn-secondary" id="assessmentMap">Assessment Map</button>
+                  <button type="button" class="btn btn-secondary" id="studentList">Student List</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+        <div class="row" style="height: 1em;"></div>
+        <div class="row" >
+          <div class="col-sm">
+            <div class="card" >
+              <div class="card-body">
+                <h5 class="card-title">Pretest</h5>
+                <div class="card-text float-right align-middle">
+                  <span id="pretestStudents"></span>
+                </div>
+                <div class="percentNumber bg-dark rounded-circle align-middle">
+                  <span id="examOne">-</span>
+                </div>
+              </div>
+            </div>
+              
+          </div>
+          <div class="col-sm">
+            <div class="card" >
+              <div class="card-body">
+                <h5 class="card-title">Posttest</h5>
+                <div class="card-text float-right align-middle">
+                  <span id="posttestStudents"></span>
+                </div>
+                <div class="percentNumber bg-dark rounded-circle align-middle">
+                  <span id="examTwo">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm">
+            <div class="card" >
+              <div class="card-body">
+                <h5 class="card-title">Matched Students</h5>
+                <div class="percentNumber bg-dark rounded-circle align-middle">
+                  <span id="students">-</span>
+                </div>
+              </div>
+            </div>
+            
+          </div> 
+        </div>
+        <div class="row" style="height: 1em;"></div>
+        <div class="row" id="analysisDescription">
+          <div class="col-sm">
+            <div class="card" >
+              <div class="card-body">
+                <h5 class="card-title">I need more data!</h5>
+                <p class="card-text">To perform an analysis, you need to load the pretest and posttest.  If you don't specify an assessment map file, I will assume the questions are in the same order and all questions have four options.  If you don't specify the student list file, I will use all students who appear in both the pretest and posttest.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" id="analysisButtons" style="display:none;">
+          <div class="col-sm">
+            <div class="card" >
+              <div class="card-body">
+                <h5 class="card-title">Matched Question Analysis</h5>
+                <p class="card-text">This is the primary output grouped by question.  If you don't know what you want, this is what you should save.</p>
+                <div class="btn-group" role="group" aria-label="Matched Analysis">
+                  <button type="button" class="btn btn-primary" id="MatchedQuestion">Save Analysis</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm">
+            <div class="card" >
+              <div class="card-body">
+                <h5 class="card-title">Matched Student Analysis</h5>
+                <p class="card-text">This output is grouped by student.  There is two versions of this analysis: one for each unique student, and one for each unique student/options.</p>
+                <div class="btn-group" role="group" aria-label="Matched Analysis">
+                  <button type="button" class="btn btn-secondary" id="MatchedStudent">Save Student</button>
+                  <button type="button" class="btn btn-secondary" id="MatchedStudentByOption">Save Student/Options</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+
+          
+        </div>
+        
+      </div>
+    </main>
+    <footer class="footer bg-dark">
+      <div class="container">
+        <p>Build 2020-7-5</p>
+      </div>
+    </footer>
+    <script type="text/javascript" src="./js/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <script src="./renderer.js"></script>
+  </body>
+</html>
