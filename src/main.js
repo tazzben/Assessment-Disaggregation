@@ -1,8 +1,13 @@
 const {app, BrowserWindow, ipcMain, Menu, dialog, shell} = require('electron');
+
+require('update-electron-app')();
+if (require('electron-squirrel-startup')) return app.quit();
+
 const path = require('path');
 const database = require('./dbo.js');
 const csv = require('./readcsv.js');
 const output = require('./output.js');
+
 
 
 

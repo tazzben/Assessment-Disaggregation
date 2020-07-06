@@ -1,5 +1,15 @@
 const keychain = require('keytar');
 
+
+async function getGitHub (){
+   let credentials = await keychain.findCredentials("githubAPIToken");
+   let token = "";
+   for (let row of credentials){
+     token = row.password;
+   }
+   return token;
+}
+
 async function getAppleId (){
   let credentials = await keychain.findCredentials("electronBuildAppleID");
   let cert = await keychain.findCredentials("electronBuildCert");
@@ -60,10 +70,11 @@ let baseConfig  = {
           name: "@electron-forge/maker-rpm",
           config: {}
         }
-  ]
+  ],
+  publishers:[]
 };
 
-if(process.platform == 'darwin'){
+if(process.platform === 'darwin'){
   let creds = getAppleId();
   creds.then((value) => {
     const {notarize, useCert} = value;
@@ -72,5 +83,21 @@ if(process.platform == 'darwin'){
   });
 }
 
+if (process.platform !== "win32" ){
+  let github = getGitHub();
+  github.then((value) => {
+    let githubconfig = {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'tazzben',
+          name: 'Assessment-Disaggregation'
+        }
+      },
+      authToken: value
+    };
+    baseConfig.publishers.push(githubconfig);
+  });
+}
 
 module.exports =  baseConfig;
