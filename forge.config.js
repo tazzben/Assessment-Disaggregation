@@ -1,4 +1,7 @@
-require('dotenv').config({ path: '~/.env' });
+const os = require('os');
+const path = require('path');
+
+require('dotenv').config({ path: path.join(os.homedir(), ".env") });
 let baseConfig  = {
   packagerConfig: {
       icon: "./src/icons/icon.icns",
