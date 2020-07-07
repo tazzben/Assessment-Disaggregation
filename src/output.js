@@ -1,4 +1,3 @@
-const fs  = require('fs')
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 
@@ -15,7 +14,7 @@ const calcAlpha = (Options, NL, PL, RL) => {
 };
 
 const calcFlow = (Options, NL, PL, RL) => {
-    return calcGamma(Options, NL, PL, RL) -  calcAlpha(Options, NL, PL, RL);
+    return calcGamma(Options, NL, PL, RL) - calcAlpha(Options, NL, PL, RL);
 };
 
 const calcGammaGain = (Options, NL, PL, RL) => {
@@ -31,7 +30,7 @@ const sumReducer = (accumulator, currentValue) => accumulator + currentValue;
 const questionAnalysis = (db, filename) => {
     let exportArray = [];
     const dataset = db.buildMatched();
-    for (let row of dataset){
+    for (let row of dataset) {
         let r = {
             Q: row.Q,
             PL: row.PL,
@@ -51,23 +50,64 @@ const questionAnalysis = (db, filename) => {
         exportArray.push(r);
     }
     const csvWriter = createCsvWriter({
-         path: filename,
-         header: [
-            {id: 'Q', title: 'Q'},
-            {id: 'PL', title: 'PL'},
-            {id: 'RL', title: 'RL'},
-            {id: 'ZL', title: 'ZL'},
-            {id: 'NL', title: 'NL'},
-            {id: 'PreTest', title: 'PreTest'},
-            {id: 'PostTest', title: 'PostTest'},
-            {id: 'Delta', title: 'Delta'},
-            {id: 'Gamma', title: 'Gamma'},
-            {id: 'Mu', title: 'Mu'},
-            {id: 'Alpha', title: 'Alpha'},
-            {id: 'Flow', title: 'Flow'},
-            {id: 'GammaGain', title: 'GammaGain'},
-            {id: 'GammaGainZero', title: 'GammaGainZero'}
-         ]
+        path: filename,
+        header: [{
+                id: 'Q',
+                title: 'Q'
+            },
+            {
+                id: 'PL',
+                title: 'PL'
+            },
+            {
+                id: 'RL',
+                title: 'RL'
+            },
+            {
+                id: 'ZL',
+                title: 'ZL'
+            },
+            {
+                id: 'NL',
+                title: 'NL'
+            },
+            {
+                id: 'PreTest',
+                title: 'PreTest'
+            },
+            {
+                id: 'PostTest',
+                title: 'PostTest'
+            },
+            {
+                id: 'Delta',
+                title: 'Delta'
+            },
+            {
+                id: 'Gamma',
+                title: 'Gamma'
+            },
+            {
+                id: 'Mu',
+                title: 'Mu'
+            },
+            {
+                id: 'Alpha',
+                title: 'Alpha'
+            },
+            {
+                id: 'Flow',
+                title: 'Flow'
+            },
+            {
+                id: 'GammaGain',
+                title: 'GammaGain'
+            },
+            {
+                id: 'GammaGainZero',
+                title: 'GammaGainZero'
+            }
+        ]
     });
     csvWriter.writeRecords(exportArray).then(() => {
         console.log('...Done');
@@ -77,32 +117,32 @@ const questionAnalysis = (db, filename) => {
 const studentAnalysis = (db, filename, group = false) => {
     let exportArray = [];
     let dataset = db.buildMatched(true);
-    
+
     dataset.push([{
         id: 0,
         Options: 0
     }]);
 
     let rowGroup = {
-            PL: [],
-            RL: [],
-            ZL: [],
-            NL: [],
-            PreTest: [],
-            PostTest: [],
-            Delta: [],
-            Gamma: [],
-            Mu: [],
-            Alpha: [],
-            Flow: [],
-            c: []
+        PL: [],
+        RL: [],
+        ZL: [],
+        NL: [],
+        PreTest: [],
+        PostTest: [],
+        Delta: [],
+        Gamma: [],
+        Mu: [],
+        Alpha: [],
+        Flow: [],
+        c: []
     };
 
     const clearGroup = JSON.parse(JSON.stringify(rowGroup));
     let currentOptions = 0;
     let currentId = 0;
-    for (let row of dataset){
-        if (!((row.Options == currentOptions || group) && row.id == currentId || (currentOptions == 0 && currentId == 0))){
+    for (let row of dataset) {
+        if (!((row.Options == currentOptions || group) && row.id == currentId || (currentOptions == 0 && currentId == 0))) {
             let totQs = rowGroup["c"].reduce(sumReducer, 0);
             let r = {
                 id: currentId,
@@ -119,7 +159,7 @@ const studentAnalysis = (db, filename, group = false) => {
                 Mu: rowGroup["Mu"].reduce(sumReducer, 0) / totQs,
                 Alpha: rowGroup["Alpha"].reduce(sumReducer, 0) / totQs,
                 Flow: rowGroup["Flow"].reduce(sumReducer, 0) / totQs,
-                GammaGain: (rowGroup["Gamma"].reduce(sumReducer, 0) / totQs)/(1 - rowGroup["Mu"].reduce(sumReducer, 0) / totQs),
+                GammaGain: (rowGroup["Gamma"].reduce(sumReducer, 0) / totQs) / (1 - rowGroup["Mu"].reduce(sumReducer, 0) / totQs),
                 GammaGainZero: calcGammaGainZero(rowGroup["NL"].reduce(sumReducer, 0) / totQs, rowGroup["PL"].reduce(sumReducer, 0) / totQs, rowGroup["RL"].reduce(sumReducer, 0) / totQs)
             };
             exportArray.push(r);
@@ -138,45 +178,95 @@ const studentAnalysis = (db, filename, group = false) => {
         rowGroup["Flow"].push(calcFlow(row.Options, row.NL, row.PL, row.RL) * row.c);
         rowGroup["c"].push(row.c);
         currentOptions = row.Options;
-        currentId  = row.id;
+        currentId = row.id;
     }
-    let defaultHeader = [
-        {id: 'Questions', title: 'Questions'},
-        {id: 'PL', title: 'PL'},
-        {id: 'RL', title: 'RL'},
-        {id: 'ZL', title: 'ZL'},
-        {id: 'NL', title: 'NL'},
-        {id: 'PreTest', title: 'PreTest'},
-        {id: 'PostTest', title: 'PostTest'},
-        {id: 'Delta', title: 'Delta'},
-        {id: 'Gamma', title: 'Gamma'},
-        {id: 'Mu', title: 'Mu'},
-        {id: 'Alpha', title: 'Alpha'},
-        {id: 'Flow', title: 'Flow'},
-        {id: 'GammaGain', title: 'GammaGain'},
-        {id: 'GammaGainZero', title: 'GammaGainZero'}
-     ];
-    
-    let header = [{id: 'id', title: 'id'}, {id: 'Options', title: 'Options'}, ...defaultHeader];
-    
-    if (group){
-        header = [{id: 'id', title: 'id'}, ...defaultHeader]; 
+    let defaultHeader = [{
+            id: 'Questions',
+            title: 'Questions'
+        },
+        {
+            id: 'PL',
+            title: 'PL'
+        },
+        {
+            id: 'RL',
+            title: 'RL'
+        },
+        {
+            id: 'ZL',
+            title: 'ZL'
+        },
+        {
+            id: 'NL',
+            title: 'NL'
+        },
+        {
+            id: 'PreTest',
+            title: 'PreTest'
+        },
+        {
+            id: 'PostTest',
+            title: 'PostTest'
+        },
+        {
+            id: 'Delta',
+            title: 'Delta'
+        },
+        {
+            id: 'Gamma',
+            title: 'Gamma'
+        },
+        {
+            id: 'Mu',
+            title: 'Mu'
+        },
+        {
+            id: 'Alpha',
+            title: 'Alpha'
+        },
+        {
+            id: 'Flow',
+            title: 'Flow'
+        },
+        {
+            id: 'GammaGain',
+            title: 'GammaGain'
+        },
+        {
+            id: 'GammaGainZero',
+            title: 'GammaGainZero'
+        }
+    ];
+
+    let header = [{
+        id: 'id',
+        title: 'id'
+    }, {
+        id: 'Options',
+        title: 'Options'
+    }, ...defaultHeader];
+
+    if (group) {
+        header = [{
+            id: 'id',
+            title: 'id'
+        }, ...defaultHeader];
     }
-     
-   const csvWriter = createCsvWriter({
+
+    const csvWriter = createCsvWriter({
         path: filename,
         header: header
-   });
+    });
 
-   csvWriter.writeRecords(exportArray).then(() => {
-       console.log('...Done');
-   });
+    csvWriter.writeRecords(exportArray).then(() => {
+        console.log('...Done');
+    });
 };
 
 const unMatchedStudentResults = (db, filename) => {
     let exportArray = [];
     const dataset = db.buildStudentUnmatched();
-    for (let row of dataset){
+    for (let row of dataset) {
         let r = {
             id: row.id,
             Exam1: row.Exam1,
@@ -186,22 +276,30 @@ const unMatchedStudentResults = (db, filename) => {
     }
     const csvWriter = createCsvWriter({
         path: filename,
-        header: [
-            {id: 'id', title: 'id'},
-            {id: 'Exam1', title: 'Exam1'},
-            {id: 'Exam2', title: 'Exam2'}   
+        header: [{
+                id: 'id',
+                title: 'id'
+            },
+            {
+                id: 'Exam1',
+                title: 'Exam1'
+            },
+            {
+                id: 'Exam2',
+                title: 'Exam2'
+            }
         ]
     });
 
     csvWriter.writeRecords(exportArray).then(() => {
-       console.log('...Done');
+        console.log('...Done');
     });
 };
 
 const unMatchedExamResults = (db, filename) => {
     let exportArray = [];
     const dataset = db.buildExamUnmatched();
-    for (let row of dataset){
+    for (let row of dataset) {
         let r = {
             Q: row.q,
             Exam1: row.Exam1,
@@ -212,16 +310,27 @@ const unMatchedExamResults = (db, filename) => {
     }
     const csvWriter = createCsvWriter({
         path: filename,
-        header: [
-            {id: 'Q', title: 'Q'},
-            {id: 'Exam1', title: 'Exam1'},
-            {id: 'Exam2', title: 'Exam2'},
-            {id: 'Options', title: 'Options'}
+        header: [{
+                id: 'Q',
+                title: 'Q'
+            },
+            {
+                id: 'Exam1',
+                title: 'Exam1'
+            },
+            {
+                id: 'Exam2',
+                title: 'Exam2'
+            },
+            {
+                id: 'Options',
+                title: 'Options'
+            }
         ]
     });
 
     csvWriter.writeRecords(exportArray).then(() => {
-       console.log('...Done');
+        console.log('...Done');
     });
 };
 

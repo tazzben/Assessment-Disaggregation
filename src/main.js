@@ -1,4 +1,11 @@
-const {app, BrowserWindow, ipcMain, Menu, dialog, shell} = require('electron');
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  dialog,
+  shell
+} = require('electron');
 
 require('update-electron-app')();
 if (require('electron-squirrel-startup')) return app.quit();
@@ -15,7 +22,7 @@ const output = require('./output.js');
 let data = new database();
 let mainWindow;
 
-function createWindow () {
+function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 900,
@@ -28,13 +35,13 @@ function createWindow () {
     }
   });
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
-//  mainWindow.webContents.openDevTools();
+  //  mainWindow.webContents.openDevTools();
 }
 
 
 app.whenReady().then(() => {
   createWindow()
-  
+
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -48,42 +55,58 @@ app.on('window-all-closed', function () {
 
 const loadPretest = () => {
   const pretestFile = dialog.showOpenDialogSync(mainWindow, {
-    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'],
+    filters: [{
+      name: 'CSV',
+      extensions: ['csv']
+    }]
   });
-  if(pretestFile){
+  if (pretestFile) {
     csv.processExamFile(data, pretestFile.toString(), 1, sendUpdate);
   }
 };
 
 const loadPosttest = () => {
   const posttestFile = dialog.showOpenDialogSync(mainWindow, {
-    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'],
+    filters: [{
+      name: 'CSV',
+      extensions: ['csv']
+    }]
   });
-  if(posttestFile){
+  if (posttestFile) {
     csv.processExamFile(data, posttestFile.toString(), 2, sendUpdate);
   }
 };
 
 const loadAssessmentMap = () => {
   const assessmentMap = dialog.showOpenDialogSync(mainWindow, {
-    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'],
+    filters: [{
+      name: 'CSV',
+      extensions: ['csv']
+    }]
   });
-  if(assessmentMap){
+  if (assessmentMap) {
     csv.readAssessmentFile(data, assessmentMap.toString(), sendUpdate);
   }
 };
 
 const loadStudents = () => {
   const studentList = dialog.showOpenDialogSync(mainWindow, {
-    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'],
+    filters: [{
+      name: 'CSV',
+      extensions: ['csv']
+    }]
   });
-  if(studentList){
-    csv.readStudentIds(data,studentList.toString(), sendUpdate);
+  if (studentList) {
+    csv.readStudentIds(data, studentList.toString(), sendUpdate);
   }
 };
 
 const sendUpdate = (outcome) => {
-  if (outcome === false){
+  if (outcome === false) {
     dialog.showMessageBox(null, {
       message: 'I don\'t know what to make of that file!',
       detail: 'The file you selected does not conform to a format I know.  Make sure you selected the correct file.  For more information about supported file formats, check the help menu.'
@@ -98,40 +121,56 @@ const sendUpdate = (outcome) => {
 
 const produceMatchedQ = () => {
   const matchedAnalysisQ = dialog.showSaveDialogSync(mainWindow, {
-    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'],
+    filters: [{
+      name: 'CSV',
+      extensions: ['csv']
+    }]
   });
-  if (matchedAnalysisQ){
+  if (matchedAnalysisQ) {
     output.questionAnalysis(data, matchedAnalysisQ);
   }
-  
+
 };
 
-const matchedStudent = (group) =>{
+const matchedStudent = (group) => {
   const matchedAnalysisS = dialog.showSaveDialogSync(mainWindow, {
-    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'],
+    filters: [{
+      name: 'CSV',
+      extensions: ['csv']
+    }]
   });
-  if(matchedAnalysisS){
+  if (matchedAnalysisS) {
     output.studentAnalysis(data, matchedAnalysisS, group);
   }
 };
 
 const unmatchedExam = () => {
   const unmatchedExamstring = dialog.showSaveDialogSync(mainWindow, {
-    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'],
+    filters: [{
+      name: 'CSV',
+      extensions: ['csv']
+    }]
   });
-  if (unmatchedExamstring){
+  if (unmatchedExamstring) {
     output.unMatchedExamResults(data, unmatchedExamstring);
   }
 };
 
 const unmatchedStudent = () => {
   const unmatchedStudnettring = dialog.showSaveDialogSync(mainWindow, {
-    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'],
+    filters: [{
+      name: 'CSV',
+      extensions: ['csv']
+    }]
   });
-  if (unmatchedStudnettring){
+  if (unmatchedStudnettring) {
     output.unMatchedStudentResults(data, unmatchedStudnettring);
   }
-  
+
 };
 
 
@@ -140,48 +179,68 @@ const template = [
   // { role: 'appMenu' }
   ...(isMac ? [{
     label: app.name,
-    submenu: [
-      { role: 'about' },
-      { type: 'separator' },
-      { role: 'services' },
-      { type: 'separator' },
-      { role: 'hide' },
-      { role: 'hideothers' },
-      { role: 'unhide' },
-      { type: 'separator' },
-      { role: 'quit' }
+    submenu: [{
+        role: 'about'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        role: 'services'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        role: 'hide'
+      },
+      {
+        role: 'hideothers'
+      },
+      {
+        role: 'unhide'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        role: 'quit'
+      }
     ]
   }] : []),
   // { role: 'fileMenu' }
   {
     label: 'File',
     submenu: [
-      isMac ? { role: 'close' } : { role: 'quit' }
+      isMac ? {
+        role: 'close'
+      } : {
+        role: 'quit'
+      }
     ]
   },
   {
     label: 'Load',
-    submenu: [
-     {
+    submenu: [{
         label: 'Select Pretest',
         accelerator: 'CmdOrCtrl+P',
         click: () => {
           loadPretest();
         }
-     },
-     {
-      label: 'Select Posttest',
-      accelerator: 'CmdOrCtrl+F',
-      click: () => {
-        loadPosttest();
-      }
-     },
+      },
+      {
+        label: 'Select Posttest',
+        accelerator: 'CmdOrCtrl+F',
+        click: () => {
+          loadPosttest();
+        }
+      },
       {
         label: 'Select Assessment Map',
         accelerator: 'CmdOrCtrl+A',
         click: () => {
           loadAssessmentMap();
-      }
+        }
       },
       {
         label: 'Select Student List',
@@ -194,8 +253,7 @@ const template = [
   },
   {
     label: 'Analyze',
-    submenu: [
-      {
+    submenu: [{
         label: 'Matched Question Analysis',
         accelerator: 'CmdOrCtrl+S',
         click: () => {
@@ -234,8 +292,7 @@ const template = [
   },
   {
     role: 'help',
-    submenu: [
-      {
+    submenu: [{
         label: 'Online Docs',
         click: async () => {
           await shell.openExternal('https://docs.assessmentdisaggregation.org');
@@ -260,34 +317,34 @@ const menu = Menu.buildFromTemplate(template)
 Menu.setApplicationMenu(menu)
 
 ipcMain.on("toMain", (event, args) => {
-  if (args == 'pretest'){
+  if (args == 'pretest') {
     loadPretest();
   }
-  if (args == 'posttest'){
+  if (args == 'posttest') {
     loadPosttest();
   }
-  if (args == 'map'){
+  if (args == 'map') {
     loadAssessmentMap();
   }
-  if (args == 'students'){
+  if (args == 'students') {
     loadStudents();
   }
-  if (args == 'matchedOutputQ'){
+  if (args == 'matchedOutputQ') {
     produceMatchedQ();
   }
-  if (args == 'matchedOutputStudents'){
+  if (args == 'matchedOutputStudents') {
     matchedStudent(true);
   }
-  if (args == 'matchedOutputStudentsbyGroup'){
+  if (args == 'matchedOutputStudentsbyGroup') {
     matchedStudent(false);
   }
-  if (args == 'unmatchedExam'){
+  if (args == 'unmatchedExam') {
     unmatchedExam();
   }
-  if (args == 'unmatchedStudents'){
+  if (args == 'unmatchedStudents') {
     unmatchedStudent();
   }
-  if (args == 'update'){
+  if (args == 'update') {
     sendUpdate(true);
   }
 });
