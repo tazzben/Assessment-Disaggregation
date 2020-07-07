@@ -48,7 +48,7 @@ app.on('window-all-closed', function () {
 
 const loadPretest = () => {
   const pretestFile = dialog.showOpenDialogSync(mainWindow, {
-    properties: ['openFile', 'openDirectory'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
   });
   if(pretestFile){
     csv.processExamFile(data, pretestFile.toString(), 1, sendUpdate);
@@ -57,7 +57,7 @@ const loadPretest = () => {
 
 const loadPosttest = () => {
   const posttestFile = dialog.showOpenDialogSync(mainWindow, {
-    properties: ['openFile', 'openDirectory'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
   });
   if(posttestFile){
     csv.processExamFile(data, posttestFile.toString(), 2, sendUpdate);
@@ -66,7 +66,7 @@ const loadPosttest = () => {
 
 const loadAssessmentMap = () => {
   const assessmentMap = dialog.showOpenDialogSync(mainWindow, {
-    properties: ['openFile', 'openDirectory'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
   });
   if(assessmentMap){
     csv.readAssessmentFile(data, assessmentMap.toString(), sendUpdate);
@@ -75,7 +75,7 @@ const loadAssessmentMap = () => {
 
 const loadStudents = () => {
   const studentList = dialog.showOpenDialogSync(mainWindow, {
-    properties: ['openFile', 'openDirectory'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
   });
   if(studentList){
     csv.readStudentIds(data,studentList.toString(), sendUpdate);
@@ -98,7 +98,7 @@ const sendUpdate = (outcome) => {
 
 const produceMatchedQ = () => {
   const matchedAnalysisQ = dialog.showSaveDialogSync(mainWindow, {
-    properties: ['openFile', 'openDirectory'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
   });
   if (matchedAnalysisQ){
     output.questionAnalysis(data, matchedAnalysisQ);
@@ -108,7 +108,7 @@ const produceMatchedQ = () => {
 
 const matchedStudent = (group) =>{
   const matchedAnalysisS = dialog.showSaveDialogSync(mainWindow, {
-    properties: ['openFile', 'openDirectory'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
   });
   if(matchedAnalysisS){
     output.studentAnalysis(data, matchedAnalysisS, group);
@@ -117,7 +117,7 @@ const matchedStudent = (group) =>{
 
 const unmatchedExam = () => {
   const unmatchedExamstring = dialog.showSaveDialogSync(mainWindow, {
-    properties: ['openFile', 'openDirectory'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
   });
   if (unmatchedExamstring){
     output.unMatchedExamResults(data, unmatchedExamstring);
@@ -126,7 +126,7 @@ const unmatchedExam = () => {
 
 const unmatchedStudent = () => {
   const unmatchedStudnettring = dialog.showSaveDialogSync(mainWindow, {
-    properties: ['openFile', 'openDirectory'], filters: [{ name: 'CSV', extensions: ['csv'] }]
+    properties: ['openFile'], filters: [{ name: 'CSV', extensions: ['csv'] }]
   });
   if (unmatchedStudnettring){
     output.unMatchedStudentResults(data, unmatchedStudnettring);

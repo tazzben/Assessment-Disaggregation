@@ -1,7 +1,5 @@
 
 window.api.receive("fromMain", (data) => {
-    console.log(data);
-    console.log(`Received ${data} from main process`);
     if (data.students != undefined){
         let numberofStudents = Math.round(data.students);
         let examOne = data.examOne.score ? Math.round(data.examOne.score * 100).toString() + "%" : "-";
@@ -20,6 +18,12 @@ window.api.receive("fromMain", (data) => {
     }else{
         $("#analysisButtons").hide();
         $("#analysisDescription").show()
+    }
+    let scroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    if (scroll > 0){
+        $('#footer').hide();
+    }else{
+        $('#footer').show();
     }
 });
 
@@ -46,4 +50,10 @@ $( document ).ready(function() {
         window.api.send("toMain", "matchedOutputStudentsbyGroup");
     });
     window.api.send("toMain", "update");
+    let scroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    if (scroll > 0){
+        $('#footer').hide();
+    }else{
+        $('#footer').show();
+    }
 });

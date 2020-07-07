@@ -91,16 +91,16 @@ const detectFormat = (filename, callback) => {
         if (results.length > 0){
             const header = results[0];
             const {scantron, key} = detectScantron(header);
-            const {altgrading, questionColumns, attemptColumn, idColumn, sisidColumn} = detectColumns(header);
+            const {altgrading, questionColumns, attemptColumn, idColumn, sisidColumn, zipgradeColumn} = detectColumns(header);
             let fullSet = [];
 
-            if (scantron || (attemptColumn > 0 && (idColumn > 0 || sisidColumn > 0))){
+            if (scantron || (attemptColumn !== false && (idColumn !== false || sisidColumn !== false))){
                 fullSet = results;
                 fullSet.splice(0,1);
             }
 
             const scantronData = scantron ? fullSet : [];
-            const canvasData = (attemptColumn > 0 && (idColumn > 0 || sisidColumn > 0)) ? fullSet : [];
+            const canvasData = (attemptColumn !== false && (idColumn !== false || sisidColumn !== false)) ? fullSet : [];
             callback (
                 {      scantron: scantron,
                     scantronKey: key,
@@ -111,7 +111,8 @@ const detectFormat = (filename, callback) => {
                          header: header, 
                      canvasData: canvasData,
                      idColumn: idColumn,
-                     sisidColumn: sisidColumn
+                     sisidColumn: sisidColumn,
+                     zipgradeColumn: zipgradeColumn
               }
             );
         }else{
@@ -168,11 +169,11 @@ const processScantronData = (db, exam, data, key) => {
     return success;
 };
 
-const processColumnData = (db, exam, filename, altgrading, callback) => {
+const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callback) => {
     callback = callback || function(){};
     let correctTest = ['a', 'b', 'c', 'd', 'e'];
     let results = [];
-    let idKeys = ['id','student id','external id'];
+    let idKeys = ['id','student id','external id', 'zipgrade id'];
     let success = false;
     fs.createReadStream(filename)
     .pipe(stripBom())
@@ -194,7 +195,7 @@ const processColumnData = (db, exam, filename, altgrading, callback) => {
                     if ((altgrading && correctTest.includes(value.toLowerCase())) || Number(value) > 0){
                         correct = 1;
                     }
-                    if (Number.isInteger(question)){
+                    if (Number.isInteger(question) && (zipgradeColumn === false || value.toString().trim() !== '')){
                         rowEnteries.push ([question, correct]);
                     }
                 }
@@ -214,9 +215,10 @@ const processColumnData = (db, exam, filename, altgrading, callback) => {
 const detectColumns = (header) => {
     let altgrading = false; 
     let questionColumns = false;
-    let attemptColumn = 0;
-    let idColumn = 0;
-    let sisidColumn = 0;
+    let attemptColumn = false;
+    let idColumn = false;
+    let sisidColumn = false;
+    let zipgradeColumn = false;
     
     for(let [key, value] of Object.entries(header)){
         if (value.toLowerCase() === 'grade') {
@@ -234,12 +236,16 @@ const detectColumns = (header) => {
         if (value.toLowerCase() === 'sis_id'){
             sisidColumn = key
         }
+        if (value.toLowerCase() === 'zipgrade id'){
+            zipgradeColumn = key
+        }
     }
     return { altgrading: altgrading,
         questionColumns: questionColumns,
           attemptColumn: attemptColumn,
                idColumn: idColumn,
-            sisidColumn: sisidColumn
+            sisidColumn: sisidColumn,
+            zipgradeColumn: zipgradeColumn
     };
 };
 
@@ -276,7 +282,7 @@ const processExamFile = (db, filename, exam, callback) => {
         callback(out);
     } 
     detectFormat (filename, function (robj){
-        const {scantron, scantronKey, scantronData, altgrading, questionColumns, attemptColumn, header, canvasData, idColumn, sisidColumn} = robj;
+        const {scantron, scantronKey, scantronData, altgrading, questionColumns, attemptColumn, header, canvasData, idColumn, sisidColumn, zipgradeColumn} = robj;
         
         if ((scantron && scantronKey.length >0 ) || questionColumns || canvasData.length > 0){
             db.deleteExams(exam);
@@ -285,7 +291,7 @@ const processExamFile = (db, filename, exam, callback) => {
             let outcome = processScantronData(db, exam, scantronData, scantronKey);
             OutcomeFunc(outcome);
         } else if (questionColumns){
-            processColumnData(db, exam, filename, altgrading, OutcomeFunc);
+            processColumnData(db, exam, filename, altgrading, zipgradeColumn, OutcomeFunc);
         } else if (canvasData.length > 0){
             let outcome = processCanvasData(db, exam, header, canvasData, attemptColumn, idColumn, sisidColumn);
             OutcomeFunc(outcome);
