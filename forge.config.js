@@ -6,7 +6,7 @@ let baseConfig  = {
   packagerConfig: {
       icon: "./src/icons/icon.icns",
       appBundleId: "com.bensresearch.assessmentdisaggregation",
-      appCategoryType: "app-category-type=public.app-category.education",
+      appCategoryType: "public.app-category.education",
       osxSign: {
         identity: process.env.APPLE_CERT,
         hardenedRuntime: true,
@@ -23,8 +23,14 @@ let baseConfig  = {
       {
           name: "@electron-forge/maker-squirrel",
           config: {
-            name: "assessment_disaggregation"
-          }
+            name: "Assessment Disaggregation",
+            certificateFile: process.env.WINDOWSCERT,
+            certificatePassword: process.env.WINDOWSPASSWORD,
+            exe: "Assessment_Disaggregation.exe",
+            iconUrl: "./src/icons/icon.ico",
+            setupIcon: "./src/icons/icon.ico"
+          },
+          platforms: ["win32"]
         },
         {
           name: "@electron-forge/maker-zip",
