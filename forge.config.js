@@ -5,8 +5,8 @@ require('dotenv').config({ path: path.join(os.homedir(), ".env") });
 let baseConfig  = {
   packagerConfig: {
       icon: "./src/icons/icon.icns",
-      appId: "com.bensresearch.assessmentdisaggregation",
       appBundleId: "com.bensresearch.assessmentdisaggregation",
+      appCategoryType: "app-category-type=public.app-category.education",
       osxSign: {
         identity: process.env.APPLE_CERT,
         hardenedRuntime: true,
