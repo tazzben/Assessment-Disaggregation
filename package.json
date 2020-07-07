@@ -1,7 +1,7 @@
 {
   "name": "assessment-disaggregation",
   "productName": "Assessment Disaggregation",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Assessment Disaggregation",
   "main": "src/main.js",
   "repository": {
