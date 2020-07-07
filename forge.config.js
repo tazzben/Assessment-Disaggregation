@@ -24,12 +24,8 @@ let baseConfig = {
   makers: [{
       name: "@electron-forge/maker-squirrel",
       config: {
-        name: "Assessment Disaggregation",
         certificateFile: process.env.WINDOWSCERT,
         certificatePassword: process.env.WINDOWSPASSWORD,
-        exe: "Assessment_Disaggregation.exe",
-        iconUrl: "./src/icons/icon.ico",
-        setupIcon: "./src/icons/icon.ico"
       },
       platforms: ["win32"]
     },
