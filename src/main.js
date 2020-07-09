@@ -7,8 +7,13 @@ const {
   shell
 } = require('electron');
 
-require('update-electron-app')();
 if (require('electron-squirrel-startup')) return app.quit();
+
+require('update-electron-app')(
+  {
+    notifyUser: false
+  }
+);
 
 const path = require('path');
 const database = require('./dbo.js');
@@ -210,7 +215,7 @@ const template = [
   }] : []),
   // { role: 'fileMenu' }
   {
-    label: 'File',
+    label: '&File',
     submenu: [
       isMac ? {
         role: 'close'
@@ -220,7 +225,7 @@ const template = [
     ]
   },
   {
-    label: 'Load',
+    label: '&Load',
     submenu: [{
         label: 'Select Pretest',
         accelerator: 'CmdOrCtrl+P',
@@ -252,7 +257,7 @@ const template = [
     ]
   },
   {
-    label: 'Analyze',
+    label: '&Analyze',
     submenu: [{
         label: 'Matched Question Analysis',
         accelerator: 'CmdOrCtrl+S',

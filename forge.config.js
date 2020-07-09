@@ -32,7 +32,8 @@ let baseConfig = {
     {
       name: "@electron-forge/maker-zip",
       platforms: [
-        "darwin"
+        "darwin",
+        "win32"
       ]
     },
     {
