@@ -6,7 +6,7 @@ const readStudentIds = (db, filename, callback) => {
     callback = callback || function () {};
     let results = [];
     let success = false;
-    const headers = ['id', 'ids'];
+    const headers = ['id', 'student id', 'external id', 'zipgrade id', 'ids', 'sis_id'];
     fs.createReadStream(filename)
         .pipe(stripBom())
         .pipe(csv({
@@ -27,6 +27,9 @@ const readStudentIds = (db, filename, callback) => {
                     }
                 }
             });
+            if (success === false){
+                db.buildStudents();
+            }
             callback(success);
         });
 };
@@ -80,6 +83,9 @@ const readAssessmentFile = (db, filename, callback) => {
                     success = true;
                 }
             });
+            if (success === false){
+                db.buildAssessment();
+            }
             callback(success);
         });
 };
