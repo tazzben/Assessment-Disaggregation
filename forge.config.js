@@ -27,13 +27,14 @@ let baseConfig = {
         certificateFile: process.env.WINDOWSCERT,
         certificatePassword: process.env.WINDOWSPASSWORD,
       },
-      platforms: ["win32"]
+      platforms: [
+        "win32"
+      ]
     },
     {
       name: "@electron-forge/maker-zip",
       platforms: [
-        "darwin",
-        "win32"
+        "darwin"
       ]
     },
     {
