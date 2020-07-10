@@ -147,7 +147,7 @@ const processCanvasData = (db, exam, header, data, attempt, idColumn, sisidColum
     let success = false;
     data.forEach(function (row) {
 
-        let id = Number.isInteger(Number(row[sisidColumn])) ? Number(row[sisidColumn]) : Number(row[idColumn]);
+        let id = (Number.isInteger(Number(row[sisidColumn])) && Number(row[sisidColumn]) > 0) ? Number(row[sisidColumn]) : Number(row[idColumn]);
 
         let question = 1;
         for (let i = firstQuestion; i < lastQuestion + 1; i += 2) {
@@ -204,7 +204,7 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
                 let rowEnteries = [];
                 let studentid = 0;
                 for (let [key, value] of Object.entries(row)) {
-                    if (idKeys.includes(key.toLowerCase()) && Number(value) > 0) {
+                    if (idKeys.includes(key.toLowerCase()) && Number(value) > 0 && Number.isInteger(Number(value))) {
                         studentid = value;
                     }
                     if (key.substr(0, 1).toLowerCase() == "q" && Number(key.substr(1)) > 0) {
