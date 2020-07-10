@@ -29,7 +29,6 @@
     "csv-parser": "^2.3.3",
     "csv-writer": "^1.6.0",
     "dotenv": "^8.2.0",
-    "electron-rebuild": "^1.11.0",
     "electron-squirrel-startup": "^1.0.0",
     "strip-bom-stream": "^4.0.0",
     "update-electron-app": "^1.5.0"
@@ -42,6 +41,7 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.52",
     "@electron-forge/maker-zip": "^6.0.0-beta.52",
     "@electron-forge/publisher-github": "^6.0.0-beta.52",
-    "electron": "^9.1.0"
+    "electron": "^9.1.0",
+    "electron-rebuild": "^1.11.0"
   }
 }
