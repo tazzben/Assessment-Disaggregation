@@ -49,7 +49,12 @@ let baseConfig = {
     },
     {
       name: "@electron-forge/maker-deb",
-      config: {}
+      config: {
+        options: {
+          maintainer: 'Ben Smith',
+          homepage: 'https://www.assessmentdisaggregation.org/'
+        }
+      }
     },
     {
       name: "@electron-forge/maker-rpm",
