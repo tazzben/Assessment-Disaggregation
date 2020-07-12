@@ -52,7 +52,9 @@ let baseConfig = {
       config: {
         options: {
           maintainer: 'Ben Smith',
-          homepage: 'https://www.assessmentdisaggregation.org/'
+          homepage: 'https://www.assessmentdisaggregation.org/',
+          icon:"./src/icons/icon.png",
+          name: "Assessment-Disaggregation"
         }
       }
     },
