@@ -92,6 +92,10 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
   mainWindow.setTouchBar(touchBar);
+
+  mainWindow.webContents.once('dom-ready', () => {
+    sendMessage({appVersion: app.getVersion()});
+  });
 }
 
 

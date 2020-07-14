@@ -18,6 +18,9 @@ window.api.receive("fromMain", (data) => {
         $("#analysisButtons").hide();
         $("#analysisDescription").show()
     }
+    if (data.appVersion){
+        $("#appVersion").text(data.appVersion);
+    }
     let scroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     if (scroll > 0) {
         $('#footer').hide();
