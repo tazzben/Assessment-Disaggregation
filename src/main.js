@@ -4,8 +4,15 @@ const {
   ipcMain,
   Menu,
   dialog,
-  shell
+  shell,
+  TouchBar
 } = require('electron');
+
+const { 
+  TouchBarButton,
+  TouchBarGroup,
+  TouchBarSpacer 
+} = TouchBar;
 
 if (require('electron-squirrel-startup')) return app.quit();
 
@@ -19,10 +26,6 @@ const path = require('path');
 const database = require('./dbo.js');
 const csv = require('./readcsv.js');
 const output = require('./output.js');
-
-
-
-
 
 let data = new database();
 let mainWindow;
@@ -39,8 +42,56 @@ function createWindow() {
       enableRemoteModule: false
     }
   });
+
+  const buttonPretest = new TouchBarButton({
+    label: 'Pretest',
+    click: () => {
+      loadPretest();
+    }
+  });
+  
+  const buttonPosttest = new TouchBarButton({
+    label: 'Posttest',
+    click: () => {
+      loadPosttest();
+    }
+  });
+  
+  const buttonAssessment = new TouchBarButton({
+    label: 'Assessment Map',
+    click: () => {
+      loadAssessmentMap();
+    }
+  });
+  
+  const buttonAnalysis = new TouchBarButton({
+    label: 'Matched Analysis',
+    backgroundColor: '#307df6',
+    click: () => {
+      produceMatchedQ();
+    }
+  });
+
+  const touchBarGroup = new TouchBarGroup({
+    items: new TouchBar({
+      items: [
+        buttonPretest,
+        buttonPosttest,
+        buttonAssessment,
+      ]
+    })
+  });
+
+  const touchBar = new TouchBar({
+    items: [
+      touchBarGroup,
+      new TouchBarSpacer({ size: 'flexible' }),
+      buttonAnalysis,
+    ], 
+  });
+
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
-  //  mainWindow.webContents.openDevTools();
+  mainWindow.setTouchBar(touchBar);
 }
 
 
