@@ -52,3 +52,11 @@
 code {
   font-size: 80%;
 }
+
+.floatBoxCard {
+  max-width: 50%;
+  text-align: right;
+}
+.floatBoxCard > span {
+  text-align: right;
+}

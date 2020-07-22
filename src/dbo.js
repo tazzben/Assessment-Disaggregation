@@ -139,6 +139,26 @@ let dS = class dataStorage {
                       `).get();
     return count.c;
   }
+  getNumberOfMatchedQuestions() {
+      const count = this.db.prepare(`SELECT COUNT(DISTINCT pretest.qn) AS c
+                      FROM (
+                        SELECT questions.id AS id, assessment.question_num AS qn
+                        FROM questions
+                        JOIN student_list ON student_list.id=questions.id
+                        JOIN assessment ON questions.question_num=assessment.exam1
+                        WHERE questions.exam=1
+                        ) AS pretest
+                      JOIN (
+                        SELECT questions.id AS id, assessment.question_num AS qn
+                        FROM questions
+                        JOIN student_list ON student_list.id=questions.id
+                        JOIN assessment ON questions.question_num=assessment.exam2 WHERE questions.exam=2
+                        ) AS posttest 
+                      ON pretest.id=posttest.id AND pretest.qn=posttest.qn
+                      `).get();
+      return count.c;
+  }
+
   getExamScore(exam = 0) {
     const score = this.db.prepare('SELECT AVG(correct) AS score, COUNT(DISTINCT id) AS c FROM questions WHERE exam = ?').get(exam)
     return {

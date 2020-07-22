@@ -175,7 +175,8 @@ const sendUpdate = (outcome) => {
   sendMessage({
     examOne: data.getExamScore(1),
     examTwo: data.getExamScore(2),
-    students: data.getNumberOfMatchedStudents()
+    students: data.getNumberOfMatchedStudents(),
+    questions: data.getNumberOfMatchedQuestions()
   });
 };
 
