@@ -362,7 +362,7 @@ const template = [
       {
         label: 'Download Example Files',
         click: async () => {
-          await shell.openExternal('http://downloads.bensresearch.com/ww_data.zip');
+          await shell.openExternal('https://www.assessmentdisaggregation.org/downloads/ww_data.zip');
         }
       },
       {
