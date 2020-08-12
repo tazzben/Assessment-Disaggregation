@@ -22,10 +22,37 @@ require('update-electron-app')(
   }
 );
 
+let settings = require('electron-settings');
+
 const path = require('path');
 const database = require('./dbo.js');
 const csv = require('./readcsv.js');
 const output = require('./output.js');
+
+let splashScreen;
+
+async function createSplash (){
+  let splashRun = await settings.get('run.hasRun');
+  if (splashRun !== true){
+    splashScreen = new BrowserWindow({
+      width: 960, 
+      height: 408, 
+      frame: false,
+      resizable: false,
+      alwaysOnTop: true,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+        nodeIntegration: false,
+        contextIsolation: true,
+        enableRemoteModule: false
+      }
+    });
+    splashScreen.loadFile(path.join(__dirname, 'splash.html'));
+  }
+  await settings.set('run', {
+    hasRun: true
+  });
+}
 
 let data = new database();
 let mainWindow;
@@ -100,7 +127,8 @@ function createWindow() {
 
 
 app.whenReady().then(() => {
-  createWindow()
+  createWindow();
+  createSplash();
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -407,6 +435,13 @@ ipcMain.on("toMain", (event, args) => {
   }
   if (args == 'update') {
     sendUpdate(true);
+  }
+  if (args == 'closeSplash'){
+    try{
+      splashScreen.destroy();
+    }catch(err) {
+
+    }
   }
 });
 
