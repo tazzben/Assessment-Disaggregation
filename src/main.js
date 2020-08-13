@@ -39,7 +39,7 @@ async function createSplash (){
       height: 408, 
       frame: false,
       resizable: false,
-      alwaysOnTop: true,
+      alwaysOnTop: false,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
         nodeIntegration: false,
