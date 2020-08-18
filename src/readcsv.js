@@ -194,7 +194,7 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
     callback = callback || function () {};
     let correctTest = ['a', 'b', 'c', 'd', 'e'];
     let results = [];
-    let idKeys = ['id', 'student id', 'external id', 'zipgrade id'];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number'];
     let success = false;
     fs.createReadStream(filename)
         .pipe(stripBom())
@@ -207,14 +207,16 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
         .on('data', (row) => results.push(row))
         .on('end', () => {
             results.forEach(function (row) {
+                let regularExpressionTest = /^(q[\.]?\s*)([\d]+\b)/i;
                 let rowEnteries = [];
                 let studentid = 0;
                 for (let [key, value] of Object.entries(row)) {
                     if (idKeys.includes(key.toLowerCase()) && Number(value) > 0 && Number.isInteger(Number(value))) {
                         studentid = value;
                     }
-                    if (key.substr(0, 1).toLowerCase() == "q" && Number(key.substr(1)) > 0) {
-                        let question = Number(key.substr(1));
+                    let keymatch = key.match(regularExpressionTest);
+                    if (keymatch && Number(keymatch[2]) > 0) {
+                        let question = Number(keymatch[2]);
                         let correct = 0;
                         if ((altgrading && correctTest.includes(value.toLowerCase())) || Number(value) > 0) {
                             correct = 1;
