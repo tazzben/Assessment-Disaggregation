@@ -6,7 +6,7 @@ const readStudentIds = (db, filename, callback) => {
     callback = callback || function () {};
     let results = [];
     let success = false;
-    const headers = ['id', 'student id', 'external id', 'zipgrade id', 'ids', 'sis_id'];
+    const headers = ['id', 'student id', 'external id', 'zipgrade id', 'ids', 'sis_id', 'id number'];
     fs.createReadStream(filename)
         .pipe(stripBom())
         .pipe(csv({
@@ -194,7 +194,7 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
     callback = callback || function () {};
     let correctTest = ['a', 'b', 'c', 'd', 'e'];
     let results = [];
-    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number'];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sis_id'];
     let success = false;
     fs.createReadStream(filename)
         .pipe(stripBom())
@@ -245,12 +245,13 @@ const detectColumns = (header) => {
     let idColumn = false;
     let sisidColumn = false;
     let zipgradeColumn = false;
-
+    let regularExpressionTest = /^(q[\.]?\s*)([\d]+\b)/i;
     for (let [key, value] of Object.entries(header)) {
+        let keymatch = value.match(regularExpressionTest);
         if (value.toLowerCase() === 'grade') {
             altgrading = true;
         }
-        if (value.toLowerCase().startsWith("q") && Number.isInteger(Number(value.substr(1)))) {
+        if (keymatch && Number(keymatch[2]) > 0) {
             questionColumns = true;
         }
         if (value.toLowerCase() === 'attempt') {
