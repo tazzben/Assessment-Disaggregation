@@ -112,7 +112,8 @@ const detectFormat = (filename, callback) => {
                     attemptColumn,
                     idColumn,
                     sisidColumn,
-                    zipgradeColumn
+                    zipgradeColumn,
+                    googleQuiz
                 } = detectColumns(header);
                 let fullSet = [];
 
@@ -134,7 +135,8 @@ const detectFormat = (filename, callback) => {
                     canvasData: canvasData,
                     idColumn: idColumn,
                     sisidColumn: sisidColumn,
-                    zipgradeColumn: zipgradeColumn
+                    zipgradeColumn: zipgradeColumn,
+                    googleQuiz: googleQuiz
                 });
             } else {
                 callback({});
@@ -238,6 +240,53 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
         });
 };
 
+const processGoogleQuizData = (db, exam, filename, callback) => {
+    callback = callback || function () {};
+    let results = [];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sis_id'];
+    let success = false;
+    fs.createReadStream(filename)
+        .pipe(stripBom())
+        .pipe(csv({
+            mapHeaders: ({
+                header,
+                index
+            }) => header.toString().toLowerCase().trim()
+        }))
+        .on('data', (row) => results.push(row))
+        .on('end', () => {
+            results.forEach(function (row) {
+                let regularExpressionTest = /\[score\]$/i;
+                let splitValueTest = /^[\s]*([\d\.]+)[\s]*\/[\s]([\d\.]+)[\s]*$/;
+                let rowEnteries = [];
+                let studentid = 0;
+                let questionNumber = 0;
+                for (let [key, value] of Object.entries(row)) {
+                    if (idKeys.includes(key.toLowerCase()) && Number(value) > 0 && Number.isInteger(Number(value))) {
+                        studentid = value;
+                    }
+                    let keymatch = key.match(regularExpressionTest);
+                    if (keymatch) {
+                        let valuematch = value.match(splitValueTest);
+                        if (valuematch && !Number.isNaN(Number(valuematch[1])) && Number(valuematch[2]) > 0) {
+                            let question = ++questionNumber;
+                            let correct = (Number(valuematch[1]) == Number(valuematch[2]) ? 1 : 0);
+                            rowEnteries.push([question, correct]);
+                        }
+                    }
+                }
+                if (studentid > 0) {
+                    rowEnteries.forEach(function (r) {
+                        const [q, c] = r;
+                        db.insertExamRecord(exam, studentid, q, c);
+                    });
+                    success = true;
+                }
+            });
+            callback(success);
+        });
+};
+
 const detectColumns = (header) => {
     let altgrading = false;
     let questionColumns = false;
@@ -245,14 +294,20 @@ const detectColumns = (header) => {
     let idColumn = false;
     let sisidColumn = false;
     let zipgradeColumn = false;
-    let regularExpressionTest = /^(q[\.]?\s*)([\d]+\b)/i;
+    let googleQuiz = false;
+    const regularExpressionTest = /^(q[\.]?\s*)([\d]+\b)/i;
+    const googleQuizTest = /\[score\]$/i;
     for (let [key, value] of Object.entries(header)) {
         let keymatch = value.match(regularExpressionTest);
+        let keymatchQuiz = value.match(googleQuizTest);
         if (value.toLowerCase() === 'grade') {
             altgrading = true;
         }
         if (keymatch && Number(keymatch[2]) > 0) {
             questionColumns = true;
+        }
+        if (keymatchQuiz) {
+            googleQuiz = true;
         }
         if (value.toLowerCase() === 'attempt') {
             attemptColumn = key;
@@ -273,7 +328,8 @@ const detectColumns = (header) => {
         attemptColumn: attemptColumn,
         idColumn: idColumn,
         sisidColumn: sisidColumn,
-        zipgradeColumn: zipgradeColumn
+        zipgradeColumn: zipgradeColumn,
+        googleQuiz: googleQuiz
     };
 };
 
@@ -328,7 +384,8 @@ const processExamFile = (db, filename, exam, callback) => {
             canvasData,
             idColumn,
             sisidColumn,
-            zipgradeColumn
+            zipgradeColumn,
+            googleQuiz
         } = robj;
 
         if ((scantron && scantronKey.length > 0) || questionColumns || canvasData.length > 0) {
@@ -342,6 +399,8 @@ const processExamFile = (db, filename, exam, callback) => {
         } else if (canvasData.length > 0) {
             let outcome = processCanvasData(db, exam, header, canvasData, attemptColumn, idColumn, sisidColumn);
             OutcomeFunc(outcome);
+        } else if (googleQuiz) {
+            processGoogleQuizData(db, exam, filename, OutcomeFunc);
         } else {
             OutcomeFunc(false);
         }
