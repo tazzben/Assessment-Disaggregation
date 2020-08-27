@@ -2,6 +2,17 @@ const fs = require('fs')
 const csv = require('csv-parser');
 const stripBom = require('strip-bom-stream');
 
+
+const stringToNumber = (stringName) => {
+    let hash = 0, i, chr;
+    for (i = 0; i < stringName.length; i++) {
+        chr = stringName.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0;
+    }
+    return hash;
+};
+
 const readStudentIds = (db, filename, callback) => {
     callback = callback || function () {};
     let results = [];
@@ -113,7 +124,8 @@ const detectFormat = (filename, callback) => {
                     idColumn,
                     sisidColumn,
                     zipgradeColumn,
-                    googleQuiz
+                    googleQuiz,
+                    questionID
                 } = detectColumns(header);
                 let fullSet = [];
 
@@ -136,7 +148,8 @@ const detectFormat = (filename, callback) => {
                     idColumn: idColumn,
                     sisidColumn: sisidColumn,
                     zipgradeColumn: zipgradeColumn,
-                    googleQuiz: googleQuiz
+                    googleQuiz: googleQuiz,
+                    questionID: questionID
                 });
             } else {
                 callback({});
@@ -287,6 +300,65 @@ const processGoogleQuizData = (db, exam, filename, callback) => {
         });
 };
 
+const processBlackboardData = (db, exam, filename, callback) => {
+    callback = callback || function () {};
+    let results = [];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sis_id'];
+    let usernameKeys = ['username', 'usernames'];
+    let success = false;
+    fs.createReadStream(filename)
+        .pipe(stripBom())
+        .pipe(csv({
+            mapHeaders: ({
+                header,
+                index
+            }) => header.toString().toLowerCase().trim()
+        }))
+        .on('data', (row) => results.push(row))
+        .on('end', () => {
+            results.forEach(function (row) {
+                let questionNumberRE = /([\d]+)$/;
+                let studentid = 0;
+                let usernameid = 0;
+                let questionNumber = 0;
+                let possiblePoints = 0;
+                let autoscore = false;
+                let manualscore = false;
+                for (let [key, value] of Object.entries(row)) {
+                    if (idKeys.includes(key.toLowerCase()) && Number(value) > 0 && Number.isInteger(Number(value))) {
+                        studentid = value;
+                    }
+                    if (usernameKeys.includes(key.toLowerCase()) && value.toLowerCase().length > 0) {
+                        usernameid = stringToNumber(value.toLowerCase());
+                    }
+                    if (key.toLocaleLowerCase().trim() == 'question id' ){
+                        let keymatch = value.match(questionNumberRE);
+                        if (keymatch && !Number.isNaN(Number(keymatch[1]))) {
+                            questionNumber = Number(keymatch[1]);
+                        }
+                    }
+                    if (key.toLocaleLowerCase().trim() == 'possible points' && value.length > 0 && !Number.isNaN(Number(value))){
+                        possiblePoints = Number(value);
+                    }
+                    if (key.toLocaleLowerCase().trim() == 'auto score' && value.length > 0 && !Number.isNaN(Number(value))){
+                        autoscore = Number(value);
+                    }
+                    if (key.toLocaleLowerCase().trim() == 'manual score' && value.length > 0 && !Number.isNaN(Number(value))){
+                        manualscore = Number(value);
+                    }
+                }
+                studentid = studentid > 0 ? studentid : usernameid;
+                manualscore = manualscore !== false ? manualscore : autoscore;
+                if (studentid !== 0 && possiblePoints > 0 && questionNumber > 0) {
+                    let correct = manualscore == possiblePoints ? 1 : 0;
+                    db.insertExamRecord(exam, studentid, questionNumber, correct);
+                    success = true;
+                }
+            });
+            callback(success);
+        });
+};
+
 const detectColumns = (header) => {
     let altgrading = false;
     let questionColumns = false;
@@ -295,6 +367,7 @@ const detectColumns = (header) => {
     let sisidColumn = false;
     let zipgradeColumn = false;
     let googleQuiz = false;
+    let questionID = false;
     const regularExpressionTest = /^(q[\.]?\s*)([\d]+\b)/i;
     const googleQuizTest = /\[score\]$/i;
     for (let [key, value] of Object.entries(header)) {
@@ -315,11 +388,14 @@ const detectColumns = (header) => {
         if (value.toLowerCase() === 'id') {
             idColumn = key;
         }
+        if (value.toLowerCase() === 'question id'){
+            questionID = true;
+        }
         if (value.toLowerCase() === 'sis_id') {
-            sisidColumn = key
+            sisidColumn = key;
         }
         if (value.toLowerCase() === 'zipgrade id') {
-            zipgradeColumn = key
+            zipgradeColumn = key;
         }
     }
     return {
@@ -329,7 +405,8 @@ const detectColumns = (header) => {
         idColumn: idColumn,
         sisidColumn: sisidColumn,
         zipgradeColumn: zipgradeColumn,
-        googleQuiz: googleQuiz
+        googleQuiz: googleQuiz,
+        questionID: questionID
     };
 };
 
@@ -385,10 +462,11 @@ const processExamFile = (db, filename, exam, callback) => {
             idColumn,
             sisidColumn,
             zipgradeColumn,
-            googleQuiz
+            googleQuiz,
+            questionID
         } = robj;
 
-        if ((scantron && scantronKey.length > 0) || questionColumns || canvasData.length > 0) {
+        if ((scantron && scantronKey.length > 0) || questionColumns || canvasData.length > 0 || googleQuiz || questionID) {
             db.deleteExams(exam);
         }
         if (scantron && scantronKey.length > 0) {
@@ -401,6 +479,8 @@ const processExamFile = (db, filename, exam, callback) => {
             OutcomeFunc(outcome);
         } else if (googleQuiz) {
             processGoogleQuizData(db, exam, filename, OutcomeFunc);
+        } else if (questionID){
+            processBlackboardData(db, exam, filename, OutcomeFunc);
         } else {
             OutcomeFunc(false);
         }
