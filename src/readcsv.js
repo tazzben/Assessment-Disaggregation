@@ -226,7 +226,7 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
                 let rowEnteries = [];
                 let studentid = 0;
                 for (let [key, value] of Object.entries(row)) {
-                    if (idKeys.includes(key.toLowerCase()) && Number(value) > 0 && Number.isInteger(Number(value))) {
+                    if (idKeys.includes(key) && Number(value) > 0 && Number.isInteger(Number(value))) {
                         studentid = value;
                     }
                     let keymatch = key.match(regularExpressionTest);
@@ -257,6 +257,7 @@ const processGoogleQuizData = (db, exam, filename, callback) => {
     callback = callback || function () {};
     let results = [];
     let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sis_id'];
+    let usernameKeys = ['username', 'usernames'];
     let success = false;
     fs.createReadStream(filename)
         .pipe(stripBom())
@@ -273,10 +274,14 @@ const processGoogleQuizData = (db, exam, filename, callback) => {
                 let splitValueTest = /^[\s]*([\d\.]+)[\s]*\/[\s]([\d\.]+)[\s]*$/;
                 let rowEnteries = [];
                 let studentid = 0;
+                let usernameid = 0;
                 let questionNumber = 0;
                 for (let [key, value] of Object.entries(row)) {
-                    if (idKeys.includes(key.toLowerCase()) && Number(value) > 0 && Number.isInteger(Number(value))) {
+                    if (idKeys.includes(key) && Number(value) > 0 && Number.isInteger(Number(value))) {
                         studentid = value;
+                    }
+                    if (usernameKeys.includes(key) && value.length > 0) {
+                        usernameid = stringToNumber(value.toLowerCase());
                     }
                     let keymatch = key.match(regularExpressionTest);
                     if (keymatch) {
@@ -288,7 +293,8 @@ const processGoogleQuizData = (db, exam, filename, callback) => {
                         }
                     }
                 }
-                if (studentid > 0) {
+                studentid = studentid > 0 ? studentid : usernameid;
+                if (studentid !== 0) {
                     rowEnteries.forEach(function (r) {
                         const [q, c] = r;
                         db.insertExamRecord(exam, studentid, q, c);
@@ -325,25 +331,25 @@ const processBlackboardData = (db, exam, filename, callback) => {
                 let autoscore = false;
                 let manualscore = false;
                 for (let [key, value] of Object.entries(row)) {
-                    if (idKeys.includes(key.toLowerCase()) && Number(value) > 0 && Number.isInteger(Number(value))) {
+                    if (idKeys.includes(key) && Number(value) > 0 && Number.isInteger(Number(value))) {
                         studentid = value;
                     }
-                    if (usernameKeys.includes(key.toLowerCase()) && value.toLowerCase().length > 0) {
+                    if (usernameKeys.includes(key) && value.length > 0) {
                         usernameid = stringToNumber(value.toLowerCase());
                     }
-                    if (key.toLocaleLowerCase().trim() == 'question id' ){
+                    if (key == 'question id' ){
                         let keymatch = value.match(questionNumberRE);
                         if (keymatch && !Number.isNaN(Number(keymatch[1]))) {
                             questionNumber = Number(keymatch[1]);
                         }
                     }
-                    if (key.toLocaleLowerCase().trim() == 'possible points' && value.length > 0 && !Number.isNaN(Number(value))){
+                    if (key == 'possible points' && value.length > 0 && !Number.isNaN(Number(value))){
                         possiblePoints = Number(value);
                     }
-                    if (key.toLocaleLowerCase().trim() == 'auto score' && value.length > 0 && !Number.isNaN(Number(value))){
+                    if (key == 'auto score' && value.length > 0 && !Number.isNaN(Number(value))){
                         autoscore = Number(value);
                     }
-                    if (key.toLocaleLowerCase().trim() == 'manual score' && value.length > 0 && !Number.isNaN(Number(value))){
+                    if (key == 'manual score' && value.length > 0 && !Number.isNaN(Number(value))){
                         manualscore = Number(value);
                     }
                 }
