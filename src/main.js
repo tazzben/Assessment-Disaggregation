@@ -446,5 +446,7 @@ ipcMain.on("toMain", (event, args) => {
 });
 
 const sendMessage = (messageObj) => {
-  mainWindow.webContents.send("fromMain", messageObj);
+  if(!mainWindow.isDestroyed()){
+    mainWindow.webContents.send("fromMain", messageObj);
+  }
 };
