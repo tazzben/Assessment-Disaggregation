@@ -31,9 +31,8 @@ const output = require('./output.js');
 
 let splashScreen;
 
-async function createSplash (){
-  let splashRun = await settings.get('run.hasRun');
-  if (splashRun !== true){
+function createSplash (){
+  if(!splashScreen || splashScreen.isDestroyed()){
     splashScreen = new BrowserWindow({
       width: 960, 
       height: 408, 
@@ -49,9 +48,23 @@ async function createSplash (){
     });
     splashScreen.loadFile(path.join(__dirname, 'splash.html'));
   }
+}
+
+async function createStartSplash (){
+  let splashRun = await settings.get('run.hasRun');
+  if (splashRun !== true){
+    createSplash();
+  }
   await settings.set('run', {
     hasRun: true
   });
+  if (splashScreen){
+    splashScreen.webContents.once('dom-ready', () => {
+      if(!splashScreen.isDestroyed()){
+        splashScreen.webContents.send("fromMain", "startTimer");
+      }
+    });
+  }
 }
 
 let data = new database();
@@ -128,7 +141,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
-  createSplash();
+  createStartSplash();
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -399,6 +412,12 @@ const template = [
           await shell.openExternal('mailto:bosmith@unomaha.edu?subject=Assessment%20Disaggregation');
         }
       },
+      {
+        label: 'Splash Startup',
+        click: () => {
+            createSplash(); 
+        }        
+      }
     ]
   }
 ];
