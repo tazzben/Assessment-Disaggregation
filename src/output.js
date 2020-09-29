@@ -25,6 +25,15 @@ const calcGammaGainZero = (NL, PL, RL) => {
     return NL + RL < 1 ? (PL - NL) / (1 - NL - RL) : Number.NaN;
 };
 
+const calcR = (Options, NL, PL, RL) => {
+    const ep = Options > 1 ? 1 / Options : Number.NaN;
+    return (-1 + NL + PL + RL) / (2 * PL + NL * (1 + ep) + (-1 + RL) * (1 + ep));
+};
+
+const calcRZero = (NL, PL, RL) => {
+    return (1 - PL - RL) / (1 + NL - 2 * PL - RL);
+};
+
 const sumReducer = (accumulator, currentValue) => accumulator + currentValue;
 
 const questionAnalysis = (db, filename) => {
@@ -45,7 +54,9 @@ const questionAnalysis = (db, filename) => {
             Alpha: calcAlpha(row.Options, row.NL, row.PL, row.RL),
             Flow: calcFlow(row.Options, row.NL, row.PL, row.RL),
             GammaGain: calcGammaGain(row.Options, row.NL, row.PL, row.RL),
-            GammaGainZero: calcGammaGainZero(row.NL, row.PL, row.RL)
+            GammaGainZero: calcGammaGainZero(row.NL, row.PL, row.RL),
+            R: calcR(row.Options, row.NL, row.PL, row.RL),
+            RZero: calcRZero(row.NL, row.PL, row.RL)
         };
         exportArray.push(r);
     }
@@ -106,6 +117,14 @@ const questionAnalysis = (db, filename) => {
             {
                 id: 'GammaGainZero',
                 title: 'GammaGainZero'
+            },
+            {
+                id: 'R',
+                title: 'R'
+            },
+            {
+                id: 'RZero',
+                title: 'RZero'
             }
         ]
     });
@@ -135,6 +154,8 @@ const studentAnalysis = (db, filename, group = false) => {
         Mu: [],
         Alpha: [],
         Flow: [],
+        R: [],
+        RZero: [],
         c: []
     };
 
@@ -160,7 +181,9 @@ const studentAnalysis = (db, filename, group = false) => {
                 Alpha: rowGroup["Alpha"].reduce(sumReducer, 0) / totQs,
                 Flow: rowGroup["Flow"].reduce(sumReducer, 0) / totQs,
                 GammaGain: (rowGroup["Gamma"].reduce(sumReducer, 0) / totQs) / (1 - rowGroup["Mu"].reduce(sumReducer, 0) / totQs),
-                GammaGainZero: calcGammaGainZero(rowGroup["NL"].reduce(sumReducer, 0) / totQs, rowGroup["PL"].reduce(sumReducer, 0) / totQs, rowGroup["RL"].reduce(sumReducer, 0) / totQs)
+                GammaGainZero: calcGammaGainZero(rowGroup["NL"].reduce(sumReducer, 0) / totQs, rowGroup["PL"].reduce(sumReducer, 0) / totQs, rowGroup["RL"].reduce(sumReducer, 0) / totQs),
+                R: rowGroup["R"].reduce(sumReducer, 0) / totQs,
+                RZero: rowGroup["RZero"].reduce(sumReducer, 0) / totQs
             };
             exportArray.push(r);
             rowGroup = JSON.parse(JSON.stringify(clearGroup));
@@ -176,6 +199,8 @@ const studentAnalysis = (db, filename, group = false) => {
         rowGroup["Mu"].push(calcMu(row.Options, row.NL, row.RL) * row.c);
         rowGroup["Alpha"].push(calcAlpha(row.Options, row.NL, row.PL, row.RL) * row.c);
         rowGroup["Flow"].push(calcFlow(row.Options, row.NL, row.PL, row.RL) * row.c);
+        rowGroup["R"].push(calcR(row.Options, row.NL, row.PL, row.RL) * row.c);
+        rowGroup["RZero"].push(calcRZero(row.NL, row.PL, row.RL) * row.c);
         rowGroup["c"].push(row.c);
         currentOptions = row.Options;
         currentId = row.id;
@@ -235,6 +260,14 @@ const studentAnalysis = (db, filename, group = false) => {
         {
             id: 'GammaGainZero',
             title: 'GammaGainZero'
+        },
+        {
+            id: 'R',
+            title: 'R'
+        },
+        {
+            id: 'RZero',
+            title: 'RZero'
         }
     ];
 
