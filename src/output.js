@@ -6,7 +6,7 @@ const calcGamma = (Options, NL, PL, RL) => {
 };
 
 const calcGammaZero = (NL, PL, RL) => {
-    return 1 - NL - PL - RL > 0 ? ((PL - NL) * (1 - PL - RL)) / (1 - NL - PL - RL) : Infinity;
+    return 1 - NL - PL - RL > 0 ? ((PL - NL) * (1 - PL - RL)) / (1 - NL - PL - RL) : Number.NaN;
 };
 
 const calcMu = (Options, NL, RL) => {
@@ -31,11 +31,11 @@ const calcGammaGainZero = (NL, PL, RL) => {
 
 const calcR = (Options, NL, PL, RL) => {
     const ep = Options > 1 ? 1 / Options : Number.NaN;
-    return 2 * PL + NL * (1 + ep) + (-1 + RL) * (1 + ep) === 0 ? -Infinity : (-1 + NL + PL + RL) / (2 * PL + NL * (1 + ep) + (-1 + RL) * (1 + ep));
+    return 2 * PL + NL * (1 + ep) + (-1 + RL) * (1 + ep) === 0 ? Number.NaN : (-1 + NL + PL + RL) / (2 * PL + NL * (1 + ep) + (-1 + RL) * (1 + ep));
 };
 
 const calcRZero = (NL, PL, RL) => {
-    return 1 + NL - 2 * PL - RL === 0 ? Infinity : (1 - PL - RL) / (1 + NL - 2 * PL - RL);
+    return 1 + NL - 2 * PL - RL === 0 ? Number.NaN : (1 - PL - RL) / (1 + NL - 2 * PL - RL);
 };
 
 const sumReducer = (accumulator, currentValue) => accumulator + currentValue;
