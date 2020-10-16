@@ -22,12 +22,7 @@ window.api.receive("fromMain", (data) => {
     }
     if (data.questionOptions){
         let numWords = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'];
-        let wordOptions = data.questionOptions.toString();
-        try {
-            wordOptions = numWords[data.questionOptions];
-        } catch (err){
-            
-        }
+        let wordOptions = (Number.isInteger(data.questionOptions) && numWords.length > data.questionOptions) ? numWords[data.questionOptions] : data.questionOptions.toString();
         $("#questionOptions").text(wordOptions);
     }
     if (data.appVersion){
