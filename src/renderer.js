@@ -20,6 +20,16 @@ window.api.receive("fromMain", (data) => {
         $("#analysisButtons").hide();
         $("#analysisDescription").show()
     }
+    if (data.questionOptions){
+        let numWords = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'];
+        let wordOptions = data.questionOptions.toString();
+        try {
+            wordOptions = numWords[data.questionOptions];
+        } catch (err){
+            
+        }
+        $("#questionOptions").text(wordOptions);
+    }
     if (data.appVersion){
         $("#appVersion").text(data.appVersion);
     }

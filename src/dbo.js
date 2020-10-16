@@ -12,6 +12,13 @@ let dS = class dataStorage {
       db.prepare(value).run();
     });
     this.db = db;
+    this.questionOptions = 4;
+  }
+  setQuestionOptions (options){
+    this.questionOptions = options;
+  }
+  getQuestionsOptions (){
+    return this.questionOptions;
   }
   insertExamRecord(exam, id, question_num, correct) {
     return this.db.prepare('INSERT INTO questions (exam, id, question_num, correct) VALUES(?,?,?,?)').run([exam, id, question_num, correct]);
@@ -39,7 +46,7 @@ let dS = class dataStorage {
                         JOIN questions AS post ON pre.question_num=post.question_num 
                         AND pre.id=post.id AND post.exam=2 WHERE pre.exam=1 ORDER BY pre.question_num ASC`).all();
       for (let value of rows) {
-        this.db.prepare('INSERT INTO assessment(exam1, exam2, question_num, distractors, generated) VALUES(?,?,?,?,1)').run([value.num, value.num, value.num, 4]);
+        this.db.prepare('INSERT INTO assessment(exam1, exam2, question_num, distractors, generated) VALUES(?,?,?,?,1)').run([value.num, value.num, value.num, this.questionOptions]);
       }
     }
   }

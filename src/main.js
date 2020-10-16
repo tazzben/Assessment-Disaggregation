@@ -31,7 +31,10 @@ const output = require('./output.js');
 
 let splashScreen;
 
-function createSplash (){
+let data = new database();
+let mainWindow;
+
+const createSplash = () => {
   if(!splashScreen || splashScreen.isDestroyed()){
     splashScreen = new BrowserWindow({
       width: 960, 
@@ -43,14 +46,15 @@ function createSplash (){
         preload: path.join(__dirname, 'preload.js'),
         nodeIntegration: false,
         contextIsolation: true,
-        enableRemoteModule: false
+        enableRemoteModule: false,
+        worldSafeExecuteJavaScript: true
       }
     });
     splashScreen.loadFile(path.join(__dirname, 'splash.html'));
   }
-}
+};
 
-async function createStartSplash (){
+const createStartSplash = async () => {
   let splashRun = await settings.get('run.hasRun');
   if (splashRun !== true){
     createSplash();
@@ -65,12 +69,9 @@ async function createStartSplash (){
       }
     });
   }
-}
+};
 
-let data = new database();
-let mainWindow;
-
-function createWindow() {
+const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 900,
@@ -79,7 +80,8 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      enableRemoteModule: false
+      enableRemoteModule: false,
+      worldSafeExecuteJavaScript: true
     }
   });
 
@@ -89,21 +91,21 @@ function createWindow() {
       loadPretest();
     }
   });
-  
+
   const buttonPosttest = new TouchBarButton({
     label: 'Posttest',
     click: () => {
       loadPosttest();
     }
   });
-  
+
   const buttonAssessment = new TouchBarButton({
     label: 'Assessment Map',
     click: () => {
       loadAssessmentMap();
     }
   });
-  
+
   const buttonAnalysis = new TouchBarButton({
     label: 'Matched Analysis',
     backgroundColor: '#307df6',
@@ -127,32 +129,16 @@ function createWindow() {
       touchBarGroup,
       new TouchBarSpacer({ size: 'flexible' }),
       buttonAnalysis,
-    ], 
+    ],
   });
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
   mainWindow.setTouchBar(touchBar);
 
   mainWindow.webContents.once('dom-ready', () => {
-    sendMessage({appVersion: app.getVersion()});
+    sendMessage({ appVersion: app.getVersion() });
   });
-}
-
-
-app.whenReady().then(() => {
-  createWindow();
-  createStartSplash();
-
-  app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
-})
-
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
-})
+};
 
 const loadPretest = () => {
   const pretestFile = dialog.showOpenDialogSync(mainWindow, {
@@ -217,7 +203,8 @@ const sendUpdate = (outcome) => {
     examOne: data.getExamScore(1),
     examTwo: data.getExamScore(2),
     students: data.getNumberOfMatchedStudents(),
-    questions: data.getNumberOfMatchedQuestions()
+    questions: data.getNumberOfMatchedQuestions(),
+    questionOptions: data.getQuestionsOptions()
   });
 };
 
@@ -232,7 +219,6 @@ const produceMatchedQ = () => {
   if (matchedAnalysisQ) {
     output.questionAnalysis(data, matchedAnalysisQ);
   }
-
 };
 
 const matchedStudent = (group) => {
@@ -275,13 +261,23 @@ const unmatchedStudent = () => {
 
 };
 
+const changeQuestionOptionDefault = async (options) => {
+  await settings.set('options', options);
+  data.setQuestionOptions(options);
+  data.buildAssessment();
+  sendUpdate(true);
+};
 
-const isMac = process.platform === 'darwin';
-const template = [
-  // { role: 'appMenu' }
-  ...(isMac ? [{
-    label: app.name,
-    submenu: [{
+const createMenu = async () => {
+  let numOptions = await settings.get('options');
+  numOptions = (Number.isInteger(numOptions)) ? numOptions : 4;
+  data.setQuestionOptions(numOptions);
+  const isMac = process.platform === 'darwin';
+  const template = [
+    // { role: 'appMenu' }
+    ...(isMac ? [{
+      label: app.name,
+      submenu: [{
         role: 'about'
       },
       {
@@ -308,22 +304,22 @@ const template = [
       {
         role: 'quit'
       }
-    ]
-  }] : []),
-  // { role: 'fileMenu' }
-  {
-    label: '&File',
-    submenu: [
-      isMac ? {
-        role: 'close'
-      } : {
-        role: 'quit'
-      }
-    ]
-  },
-  {
-    label: '&Load',
-    submenu: [{
+      ]
+    }] : []),
+    // { role: 'fileMenu' }
+    {
+      label: '&File',
+      submenu: [
+        isMac ? {
+          role: 'close'
+        } : {
+            role: 'quit'
+          }
+      ]
+    },
+    {
+      label: '&Load',
+      submenu: [{
         label: 'Select Pretest',
         accelerator: 'CmdOrCtrl+P',
         click: () => {
@@ -351,11 +347,11 @@ const template = [
           loadStudents();
         }
       }
-    ]
-  },
-  {
-    label: '&Analyze',
-    submenu: [{
+      ]
+    },
+    {
+      label: '&Analyze',
+      submenu: [{
         label: 'Matched Question Analysis',
         accelerator: 'CmdOrCtrl+S',
         click: () => {
@@ -390,11 +386,56 @@ const template = [
           unmatchedStudent();
         }
       }
-    ]
-  },
-  {
-    role: 'help',
-    submenu: [{
+      ]
+    },
+    {
+      label: '&Options',
+      submenu: [
+        {
+          label: 'Default Number of Question Options: Two',
+          type: 'radio',
+          checked: (numOptions == 2) ? true : false,
+          click: () => {
+            changeQuestionOptionDefault(2);
+          }
+        },
+        {
+          label: 'Default Number of Question Options: Three',
+          type: 'radio',
+          checked: (numOptions == 3) ? true : false,
+          click: () => {
+            changeQuestionOptionDefault(3);
+          }
+        },
+        {
+          label: 'Default Number of Question Options: Four',
+          type: 'radio',
+          checked: (numOptions == 4) ? true : false,
+          click: () => {
+            changeQuestionOptionDefault(4);
+          }
+        },
+        {
+          label: 'Default Number of Question Options: Five',
+          type: 'radio',
+          checked: (numOptions == 5) ? true : false,
+          click: () => {
+            changeQuestionOptionDefault(5);
+          }
+        },
+        {
+          label: 'Default Number of Question Options: Six',
+          type: 'radio',
+          checked: (numOptions == 6) ? true : false,
+          click: () => {
+            changeQuestionOptionDefault(6);
+          }
+        }
+      ]
+    },
+    {
+      role: 'help',
+      submenu: [{
         label: 'Online Docs',
         click: async () => {
           await shell.openExternal('https://docs.assessmentdisaggregation.org');
@@ -415,14 +456,38 @@ const template = [
       {
         label: 'Splash Startup',
         click: () => {
-            createSplash(); 
-        }        
+          createSplash();
+        }
       }
-    ]
+      ]
+    }
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+};
+
+const sendMessage = (messageObj) => {
+  if(!mainWindow.isDestroyed()){
+    mainWindow.webContents.send("fromMain", messageObj);
   }
-];
-const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
+};
+
+app.whenReady().then(() => {
+  createMenu();
+  createWindow();
+  createStartSplash();
+
+  app.on('activate', function () {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+})
+
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') app.quit()
+})
+
 
 ipcMain.on("toMain", (event, args) => {
   if (args == 'pretest') {
@@ -464,8 +529,4 @@ ipcMain.on("toMain", (event, args) => {
   }
 });
 
-const sendMessage = (messageObj) => {
-  if(!mainWindow.isDestroyed()){
-    mainWindow.webContents.send("fromMain", messageObj);
-  }
-};
+
