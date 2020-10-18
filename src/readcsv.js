@@ -4,7 +4,8 @@ const stripBom = require('strip-bom-stream');
 
 
 const stringToNumber = (stringName) => {
-    let hash = 0, i, chr;
+    let hash = 0,
+        i, chr;
     for (i = 0; i < stringName.length; i++) {
         chr = stringName.charCodeAt(i);
         hash = ((hash << 5) - hash) + chr;
@@ -38,7 +39,7 @@ const readStudentIds = (db, filename, callback) => {
                     }
                 }
             });
-            if (success === false){
+            if (success === false) {
                 db.buildStudents();
             }
             callback(success);
@@ -94,7 +95,7 @@ const readAssessmentFile = (db, filename, callback) => {
                     success = true;
                 }
             });
-            if (success === false){
+            if (success === false) {
                 db.buildAssessment();
             }
             callback(success);
@@ -337,19 +338,19 @@ const processBlackboardData = (db, exam, filename, callback) => {
                     if (usernameKeys.includes(key) && value.length > 0) {
                         usernameid = stringToNumber(value.toLowerCase());
                     }
-                    if (key == 'question id' ){
+                    if (key == 'question id') {
                         let keymatch = value.match(questionNumberRE);
                         if (keymatch && !Number.isNaN(Number(keymatch[1]))) {
                             questionNumber = Number(keymatch[1]);
                         }
                     }
-                    if (key == 'possible points' && value.length > 0 && !Number.isNaN(Number(value))){
+                    if (key == 'possible points' && value.length > 0 && !Number.isNaN(Number(value))) {
                         possiblePoints = Number(value);
                     }
-                    if (key == 'auto score' && value.length > 0 && !Number.isNaN(Number(value))){
+                    if (key == 'auto score' && value.length > 0 && !Number.isNaN(Number(value))) {
                         autoscore = Number(value);
                     }
-                    if (key == 'manual score' && value.length > 0 && !Number.isNaN(Number(value))){
+                    if (key == 'manual score' && value.length > 0 && !Number.isNaN(Number(value))) {
                         manualscore = Number(value);
                     }
                 }
@@ -394,7 +395,7 @@ const detectColumns = (header) => {
         if (value.toLowerCase() === 'id') {
             idColumn = key;
         }
-        if (value.toLowerCase() === 'question id'){
+        if (value.toLowerCase() === 'question id') {
             questionID = true;
         }
         if (value.toLowerCase() === 'sis_id') {
@@ -485,7 +486,7 @@ const processExamFile = (db, filename, exam, callback) => {
             OutcomeFunc(outcome);
         } else if (googleQuiz) {
             processGoogleQuizData(db, exam, filename, OutcomeFunc);
-        } else if (questionID){
+        } else if (questionID) {
             processBlackboardData(db, exam, filename, OutcomeFunc);
         } else {
             OutcomeFunc(false);

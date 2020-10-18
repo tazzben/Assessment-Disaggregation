@@ -1,6 +1,8 @@
 window.api.receive("fromMain", (data) => {
-    if (data == "startTimer"){
-        setTimeout(function(){ window.api.send("toMain", "closeSplash"); }, 10000);
+    if (data == "startTimer") {
+        setTimeout(function () {
+            window.api.send("toMain", "closeSplash");
+        }, 10000);
     }
 });
 

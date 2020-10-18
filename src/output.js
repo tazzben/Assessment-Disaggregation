@@ -270,7 +270,7 @@ const studentAnalysis = (db, filename, group = false) => {
             title: 'R'
         },
         {
-            id:'GammaZero',
+            id: 'GammaZero',
             title: 'GammaZero'
         },
         {

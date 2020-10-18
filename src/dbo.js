@@ -14,10 +14,10 @@ let dS = class dataStorage {
     this.db = db;
     this.questionOptions = 4;
   }
-  setQuestionOptions (options){
+  setQuestionOptions(options) {
     this.questionOptions = options;
   }
-  getQuestionsOptions (){
+  getQuestionsOptions() {
     return this.questionOptions;
   }
   insertExamRecord(exam, id, question_num, correct) {
@@ -147,7 +147,7 @@ let dS = class dataStorage {
     return count.c;
   }
   getNumberOfMatchedQuestions() {
-      const count = this.db.prepare(`SELECT COUNT(DISTINCT pretest.qn) AS c
+    const count = this.db.prepare(`SELECT COUNT(DISTINCT pretest.qn) AS c
                       FROM (
                         SELECT questions.id AS id, assessment.question_num AS qn
                         FROM questions
@@ -163,7 +163,7 @@ let dS = class dataStorage {
                         ) AS posttest 
                       ON pretest.id=posttest.id AND pretest.qn=posttest.qn
                       `).get();
-      return count.c;
+    return count.c;
   }
 
   getExamScore(exam = 0) {

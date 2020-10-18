@@ -8,19 +8,17 @@ const {
   TouchBar
 } = require('electron');
 
-const { 
+const {
   TouchBarButton,
   TouchBarGroup,
-  TouchBarSpacer 
+  TouchBarSpacer
 } = TouchBar;
 
 if (require('electron-squirrel-startup')) return app.quit();
 
-require('update-electron-app')(
-  {
-    notifyUser: false
-  }
-);
+require('update-electron-app')({
+  notifyUser: false
+});
 
 let settings = require('electron-settings');
 
@@ -35,10 +33,10 @@ let data = new database();
 let mainWindow;
 
 const createSplash = () => {
-  if(!splashScreen || splashScreen.isDestroyed()){
+  if (!splashScreen || splashScreen.isDestroyed()) {
     splashScreen = new BrowserWindow({
-      width: 960, 
-      height: 408, 
+      width: 960,
+      height: 408,
       frame: false,
       resizable: false,
       alwaysOnTop: false,
@@ -56,15 +54,15 @@ const createSplash = () => {
 
 const createStartSplash = async () => {
   let splashRun = await settings.get('run.hasRun');
-  if (splashRun !== true){
+  if (splashRun !== true) {
     createSplash();
   }
   await settings.set('run', {
     hasRun: true
   });
-  if (splashScreen){
+  if (splashScreen) {
     splashScreen.webContents.once('dom-ready', () => {
-      if(!splashScreen.isDestroyed()){
+      if (!splashScreen.isDestroyed()) {
         splashScreen.webContents.send("fromMain", "startTimer");
       }
     });
@@ -127,7 +125,9 @@ const createWindow = () => {
   const touchBar = new TouchBar({
     items: [
       touchBarGroup,
-      new TouchBarSpacer({ size: 'flexible' }),
+      new TouchBarSpacer({
+        size: 'flexible'
+      }),
       buttonAnalysis,
     ],
   });
@@ -136,7 +136,9 @@ const createWindow = () => {
   mainWindow.setTouchBar(touchBar);
 
   mainWindow.webContents.once('dom-ready', () => {
-    sendMessage({ appVersion: app.getVersion() });
+    sendMessage({
+      appVersion: app.getVersion()
+    });
   });
 };
 
@@ -278,32 +280,32 @@ const createMenu = async () => {
     ...(isMac ? [{
       label: app.name,
       submenu: [{
-        role: 'about'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        role: 'services'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        role: 'hide'
-      },
-      {
-        role: 'hideothers'
-      },
-      {
-        role: 'unhide'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        role: 'quit'
-      }
+          role: 'about'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          role: 'services'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          role: 'hide'
+        },
+        {
+          role: 'hideothers'
+        },
+        {
+          role: 'unhide'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          role: 'quit'
+        }
       ]
     }] : []),
     // { role: 'fileMenu' }
@@ -313,85 +315,84 @@ const createMenu = async () => {
         isMac ? {
           role: 'close'
         } : {
-            role: 'quit'
-          }
+          role: 'quit'
+        }
       ]
     },
     {
       label: '&Load',
       submenu: [{
-        label: 'Select Pretest',
-        accelerator: 'CmdOrCtrl+P',
-        click: () => {
-          loadPretest();
+          label: 'Select Pretest',
+          accelerator: 'CmdOrCtrl+P',
+          click: () => {
+            loadPretest();
+          }
+        },
+        {
+          label: 'Select Posttest',
+          accelerator: 'CmdOrCtrl+F',
+          click: () => {
+            loadPosttest();
+          }
+        },
+        {
+          label: 'Select Assessment Map',
+          accelerator: 'CmdOrCtrl+A',
+          click: () => {
+            loadAssessmentMap();
+          }
+        },
+        {
+          label: 'Select Student List',
+          accelerator: 'CmdOrCtrl+L',
+          click: () => {
+            loadStudents();
+          }
         }
-      },
-      {
-        label: 'Select Posttest',
-        accelerator: 'CmdOrCtrl+F',
-        click: () => {
-          loadPosttest();
-        }
-      },
-      {
-        label: 'Select Assessment Map',
-        accelerator: 'CmdOrCtrl+A',
-        click: () => {
-          loadAssessmentMap();
-        }
-      },
-      {
-        label: 'Select Student List',
-        accelerator: 'CmdOrCtrl+L',
-        click: () => {
-          loadStudents();
-        }
-      }
       ]
     },
     {
       label: '&Analyze',
       submenu: [{
-        label: 'Matched Question Analysis',
-        accelerator: 'CmdOrCtrl+S',
-        click: () => {
-          produceMatchedQ();
+          label: 'Matched Question Analysis',
+          accelerator: 'CmdOrCtrl+S',
+          click: () => {
+            produceMatchedQ();
+          }
+        },
+        {
+          label: 'Matched Student Analysis',
+          accelerator: 'CmdOrCtrl+Shift+S',
+          click: () => {
+            matchedStudent(true);
+          }
+        },
+        {
+          label: 'Matched Student Analysis (by Options)',
+          accelerator: 'CmdOrCtrl+Shift+O',
+          click: () => {
+            matchedStudent(false);
+          }
+        },
+        {
+          label: 'Unmatched Exam Results',
+          accelerator: 'CmdOrCtrl+R',
+          click: () => {
+            unmatchedExam();
+          }
+        },
+        {
+          label: 'Unmatched Student Results',
+          accelerator: 'CmdOrCtrl+Shift+R',
+          click: () => {
+            unmatchedStudent();
+          }
         }
-      },
-      {
-        label: 'Matched Student Analysis',
-        accelerator: 'CmdOrCtrl+Shift+S',
-        click: () => {
-          matchedStudent(true);
-        }
-      },
-      {
-        label: 'Matched Student Analysis (by Options)',
-        accelerator: 'CmdOrCtrl+Shift+O',
-        click: () => {
-          matchedStudent(false);
-        }
-      },
-      {
-        label: 'Unmatched Exam Results',
-        accelerator: 'CmdOrCtrl+R',
-        click: () => {
-          unmatchedExam();
-        }
-      },
-      {
-        label: 'Unmatched Student Results',
-        accelerator: 'CmdOrCtrl+Shift+R',
-        click: () => {
-          unmatchedStudent();
-        }
-      }
       ]
     },
     {
       label: '&Options',
-      submenu: [
-        {
+      submenu: [{
           label: 'Default Number of Question Options: Two',
           type: 'radio',
           checked: (numOptions == 2) ? true : false,
@@ -436,29 +437,29 @@ const createMenu = async () => {
     {
       role: 'help',
       submenu: [{
-        label: 'Online Docs',
-        click: async () => {
-          await shell.openExternal('https://docs.assessmentdisaggregation.org');
+          label: 'Online Docs',
+          click: async () => {
+            await shell.openExternal('https://docs.assessmentdisaggregation.org');
+          }
+        },
+        {
+          label: 'Download Example Files',
+          click: async () => {
+            await shell.openExternal('https://www.assessmentdisaggregation.org/downloads/ww_data.zip');
+          }
+        },
+        {
+          label: 'E-Mail for Help',
+          click: async () => {
+            await shell.openExternal('mailto:bosmith@unomaha.edu?subject=Assessment%20Disaggregation');
+          }
+        },
+        {
+          label: 'Splash Startup',
+          click: () => {
+            createSplash();
+          }
         }
-      },
-      {
-        label: 'Download Example Files',
-        click: async () => {
-          await shell.openExternal('https://www.assessmentdisaggregation.org/downloads/ww_data.zip');
-        }
-      },
-      {
-        label: 'E-Mail for Help',
-        click: async () => {
-          await shell.openExternal('mailto:bosmith@unomaha.edu?subject=Assessment%20Disaggregation');
-        }
-      },
-      {
-        label: 'Splash Startup',
-        click: () => {
-          createSplash();
-        }
-      }
       ]
     }
   ];
@@ -467,7 +468,7 @@ const createMenu = async () => {
 };
 
 const sendMessage = (messageObj) => {
-  if(!mainWindow.isDestroyed()){
+  if (!mainWindow.isDestroyed()) {
     mainWindow.webContents.send("fromMain", messageObj);
   }
 };
@@ -520,13 +521,9 @@ ipcMain.on("toMain", (event, args) => {
   if (args == 'update') {
     sendUpdate(true);
   }
-  if (args == 'closeSplash'){
-    try{
+  if (args == 'closeSplash') {
+    if (splashScreen || !splashScreen.isDestroyed()) {
       splashScreen.destroy();
-    }catch(err) {
-
     }
   }
 });
-
-

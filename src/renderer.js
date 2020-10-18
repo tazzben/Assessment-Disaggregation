@@ -20,12 +20,12 @@ window.api.receive("fromMain", (data) => {
         $("#analysisButtons").hide();
         $("#analysisDescription").show()
     }
-    if (data.questionOptions){
+    if (data.questionOptions) {
         let numWords = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'];
         let wordOptions = (Number.isInteger(data.questionOptions) && numWords.length > data.questionOptions) ? numWords[data.questionOptions] : data.questionOptions.toString();
         $("#questionOptions").text(wordOptions);
     }
-    if (data.appVersion){
+    if (data.appVersion) {
         $("#appVersion").text(data.appVersion);
     }
     let scroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
