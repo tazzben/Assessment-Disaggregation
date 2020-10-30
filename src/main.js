@@ -14,7 +14,7 @@ const {
   TouchBarSpacer
 } = TouchBar;
 
-if (require('electron-squirrel-startup')) return app.quit();
+if (require('electron-squirrel-startup')) app.quit();
 
 require('update-electron-app')({
   notifyUser: false

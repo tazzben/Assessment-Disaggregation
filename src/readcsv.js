@@ -24,7 +24,6 @@ const readStudentIds = (db, filename, callback) => {
         .pipe(csv({
             mapHeaders: ({
                 header,
-                index
             }) => header.toString().toLowerCase().trim()
         }))
         .on('data', (row) => results.push(row))
@@ -61,7 +60,6 @@ const readAssessmentFile = (db, filename, callback) => {
         .pipe(csv({
             mapHeaders: ({
                 header,
-                index
             }) => header.toString().toLowerCase().trim()
         }))
         .on('data', (row) => results.push(row))
@@ -217,13 +215,12 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
         .pipe(csv({
             mapHeaders: ({
                 header,
-                index
             }) => header.toString().toLowerCase().trim()
         }))
         .on('data', (row) => results.push(row))
         .on('end', () => {
             results.forEach(function (row) {
-                let regularExpressionTest = /^(q[\.]?\s*)([\d]+\b)/i;
+                let regularExpressionTest = /^(q[.]?\s*)([\d]+\b)/i;
                 let rowEnteries = [];
                 let studentid = 0;
                 for (let [key, value] of Object.entries(row)) {
@@ -265,14 +262,13 @@ const processGoogleQuizData = (db, exam, filename, callback) => {
         .pipe(csv({
             mapHeaders: ({
                 header,
-                index
             }) => header.toString().toLowerCase().trim()
         }))
         .on('data', (row) => results.push(row))
         .on('end', () => {
             results.forEach(function (row) {
                 let regularExpressionTest = /\[score\]$/i;
-                let splitValueTest = /^[\s]*([\d\.]+)[\s]*\/[\s]([\d\.]+)[\s]*$/;
+                let splitValueTest = /^[\s]*([\d.]+)[\s]*\/[\s]([\d.]+)[\s]*$/;
                 let rowEnteries = [];
                 let studentid = 0;
                 let usernameid = 0;
@@ -318,7 +314,6 @@ const processBlackboardData = (db, exam, filename, callback) => {
         .pipe(csv({
             mapHeaders: ({
                 header,
-                index
             }) => header.toString().toLowerCase().trim()
         }))
         .on('data', (row) => results.push(row))
@@ -375,7 +370,7 @@ const detectColumns = (header) => {
     let zipgradeColumn = false;
     let googleQuiz = false;
     let questionID = false;
-    const regularExpressionTest = /^(q[\.]?\s*)([\d]+\b)/i;
+    const regularExpressionTest = /^(q[.]?\s*)([\d]+\b)/i;
     const googleQuizTest = /\[score\]$/i;
     for (let [key, value] of Object.entries(header)) {
         let keymatch = value.match(regularExpressionTest);
@@ -418,7 +413,7 @@ const detectColumns = (header) => {
 };
 
 const detectScantron = (header) => {
-    if (header.hasOwnProperty("2")) {
+    if (Object.prototype.hasOwnProperty.call(header,"2")) {
         let key = [];
         const numQuestions = Number(header["2"]);
         if (Number.isInteger(numQuestions)) {
