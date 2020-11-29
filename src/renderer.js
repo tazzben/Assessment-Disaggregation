@@ -28,7 +28,7 @@ window.api.receive("fromMain", (data) => {
     if (data.appVersion) {
         $("#appVersion").text(data.appVersion);
     }
-    let scroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    let scroll = document.documentElement.scrollHeight + 25 - document.documentElement.clientHeight;
     if (scroll > 0) {
         $('#footer').hide();
     } else {
@@ -59,7 +59,7 @@ $(document).ready(function () {
         window.api.send("toMain", "matchedOutputStudentsbyGroup");
     });
     window.api.send("toMain", "update");
-    let scroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    let scroll = document.documentElement.scrollHeight + 25 - document.documentElement.clientHeight;
     if (scroll > 0) {
         $('#footer').hide();
     } else {
