@@ -395,6 +395,7 @@ const createMenu = async () => {
       submenu: [{
           label: 'Default Number of Question Options: Two',
           type: 'radio',
+          accelerator: 'CmdOrCtrl+2',
           checked: (numOptions == 2) ? true : false,
           click: () => {
             changeQuestionOptionDefault(2);
@@ -403,6 +404,7 @@ const createMenu = async () => {
         {
           label: 'Default Number of Question Options: Three',
           type: 'radio',
+          accelerator: 'CmdOrCtrl+3',
           checked: (numOptions == 3) ? true : false,
           click: () => {
             changeQuestionOptionDefault(3);
@@ -411,6 +413,7 @@ const createMenu = async () => {
         {
           label: 'Default Number of Question Options: Four',
           type: 'radio',
+          accelerator: 'CmdOrCtrl+4',
           checked: (numOptions == 4) ? true : false,
           click: () => {
             changeQuestionOptionDefault(4);
@@ -419,6 +422,7 @@ const createMenu = async () => {
         {
           label: 'Default Number of Question Options: Five',
           type: 'radio',
+          accelerator: 'CmdOrCtrl+5',
           checked: (numOptions == 5) ? true : false,
           click: () => {
             changeQuestionOptionDefault(5);
@@ -427,6 +431,7 @@ const createMenu = async () => {
         {
           label: 'Default Number of Question Options: Six',
           type: 'radio',
+          accelerator: 'CmdOrCtrl+6',
           checked: (numOptions == 6) ? true : false,
           click: () => {
             changeQuestionOptionDefault(6);
