@@ -167,10 +167,11 @@ let dS = class dataStorage {
   }
 
   getExamScore(exam = 0) {
-    const score = this.db.prepare('SELECT AVG(correct) AS score, COUNT(DISTINCT id) AS c FROM questions WHERE exam = ?').get(exam)
+    const score = this.db.prepare('SELECT AVG(correct) AS score, COUNT(DISTINCT id) AS c, COUNT(DISTINCT question_num) AS cQuestions FROM questions WHERE exam = ?').get(exam)
     return {
       score: score.score,
-      count: score.c
+      count: score.c,
+      questionCount: score.cQuestions
     };
   }
 

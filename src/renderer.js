@@ -5,12 +5,16 @@ window.api.receive("fromMain", (data) => {
         let examTwo = data.examTwo.score ? Math.round(data.examTwo.score * 100).toString() + "%" : "-";
         let examOneCount = data.examOne.count ? Math.round(data.examOne.count).toString() + " students" : "";
         let examTwoCount = data.examTwo.count ? Math.round(data.examTwo.count).toString() + " students" : "";
+        let examOneQuestions = data.examOne.questionCount ? Math.round(data.examOne.questionCount).toString() + " questions" : "";
+        let examTwoQuestions = data.examTwo.questionCount ? Math.round(data.examTwo.questionCount).toString() + " questions" : "";        
         let matchedStudents = data.questions ? Math.round(data.questions).toString() + " matched questions" : "";
         $("#examOne").text(examOne);
         $("#examTwo").text(examTwo);
         $("#students").text(numberofStudents);
         $("#pretestStudents").text(examOneCount);
         $("#posttestStudents").text(examTwoCount);
+        $("#pretestQuestions").text(examOneQuestions);
+        $("#posttestQuestions").text(examTwoQuestions);
         $("#matchedQuestions").text(matchedStudents);
     }
     if (data.students) {
