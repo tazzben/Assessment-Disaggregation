@@ -112,19 +112,11 @@ const createWindow = () => {
     }
   });
 
-  const touchBarGroup = new TouchBarGroup({
-    items: new TouchBar({
-      items: [
-        buttonPretest,
-        buttonPosttest,
-        buttonAssessment,
-      ]
-    })
-  });
-
   const touchBar = new TouchBar({
     items: [
-      touchBarGroup,
+      buttonPretest,
+      buttonPosttest,
+      buttonAssessment,
       new TouchBarSpacer({
         size: 'flexible'
       }),
