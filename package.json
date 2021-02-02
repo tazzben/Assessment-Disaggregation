@@ -44,6 +44,6 @@
     "@electron-forge/publisher-github": "^6.0.0-beta.54",
     "electron": "^11.2.1",
     "electron-rebuild": "^2.3.4",
-    "eslint": "^7.18.0"
+    "eslint": "^7.19.0"
   }
 }
