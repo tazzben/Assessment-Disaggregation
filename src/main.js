@@ -10,7 +10,6 @@ const {
 
 const {
   TouchBarButton,
-  TouchBarGroup,
   TouchBarSpacer
 } = TouchBar;
 
