@@ -85,7 +85,7 @@ const readAssessmentFile = (db, filename, callback) => {
                     }
                     if (headers.options.includes(key) && !Number.isNaN(parsedInt)) {
                         let parsedFloat = Number.parseFloat(value);
-                        insertion.distractors = parsedFloat < 1 ? 1 / parsedFloat : parsedFloat;
+                        insertion.distractors = parsedFloat < 1 ? (parsedFloat === 0 ? Math.sqrt(Number.MAX_VALUE) : 1 / parsedFloat) : parsedFloat;
                     }
                 }
                 if (insertion.examOne !== false && insertion.examTwo !== false && insertion.num !== false) {
