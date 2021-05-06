@@ -25,10 +25,10 @@
     "forge": "./forge.config.js"
   },
   "dependencies": {
-    "better-sqlite3": "^7.2.0",
+    "better-sqlite3": "^7.3.1",
     "csv-parser": "^3.0.0",
     "csv-writer": "^1.6.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^9.0.0",
     "electron-settings": "^4.0.2",
     "electron-squirrel-startup": "^1.0.0",
     "strip-bom-stream": "^4.0.0",
