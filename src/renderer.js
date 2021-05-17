@@ -29,6 +29,18 @@ window.api.receive("fromMain", (data) => {
         let wordOptions = (Number.isInteger(data.questionOptions) && numWords.length > data.questionOptions) ? numWords[data.questionOptions] : data.questionOptions.toString();
         $("#questionOptions").text(wordOptions);
     }
+    if (data.examFileOne && data.examFileOne.length > 0) {
+        $("#pretestFile").text("(" + data.examFileOne + ")");
+    }
+    if (data.examFileTwo && data.examFileTwo.length > 0) {
+        $("#posttestFile").text("(" + data.examFileTwo + ")");
+    }
+    if (data.assessmentFile && data.assessmentFile.length > 0) {
+        $("#assessmentFile").text(" (you have selected " + data.assessmentFile + ")");
+    }
+    if (data.studentFile && data.studentFile.length > 0) {
+        $("#studentFile").text(" (you have selected " + data.studentFile + ") ");
+    }
     if (data.appVersion) {
         $("#appVersion").text(data.appVersion);
     }

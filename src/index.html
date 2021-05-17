@@ -38,7 +38,7 @@
             <div class="card" >
               <div class="card-body">
                 <h5 class="card-title">Optional Files</h5>
-                <p class="card-text">The assessment map is optional but recommended. This file's columns are "q" (assessment question number in output), "exam1" (pretest question number), "exam2" (posttest question number), and "options" (number of answer options for the given question).  Student list limits the students used for the analysis using a singular column: id.</p>
+                <p class="card-text">The assessment map is optional but recommended<span id="assessmentFile"></span>. This file's columns are "q" (assessment question number in output), "exam1" (pretest question number), "exam2" (posttest question number), and "options" (number of answer options for the given question).  Student list<span id="studentFile"></span> limits the students used for the analysis using a singular column: id.</p>
                 <div class="btn-group" role="group" aria-label="Optional Files">
                   <button type="button" class="btn btn-secondary" id="assessmentMap">Assessment Map</button>
                   <button type="button" class="btn btn-secondary" id="studentList">Student List</button>
@@ -53,7 +53,7 @@
           <div class="col-sm">
             <div class="card" >
               <div class="card-body">
-                <h5 class="card-title">Pretest</h5>
+                <h5 class="card-title">Pretest <span id="pretestFile"></span></h5>
                 <div class="card-text float-right align-middle floatBoxCard">
                   <span id="pretestStudents"></span>
                   <br /><span id="pretestQuestions"></span>
@@ -68,7 +68,7 @@
           <div class="col-sm">
             <div class="card" >
               <div class="card-body">
-                <h5 class="card-title">Posttest</h5>
+                <h5 class="card-title">Posttest <span id="posttestFile"></span></h5>
                 <div class="card-text float-right align-middle floatBoxCard">
                   <span id="posttestStudents"></span>
                   <br /><span id="posttestQuestions"></span>

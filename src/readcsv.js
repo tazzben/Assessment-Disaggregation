@@ -1,6 +1,7 @@
 const fs = require('fs')
 const csv = require('csv-parser');
 const stripBom = require('strip-bom-stream');
+const path = require('path');
 
 
 const stringToNumber = (stringName) => {
@@ -38,10 +39,13 @@ const readStudentIds = (db, filename, callback) => {
                     }
                 }
             });
+            let fObj = {};
             if (success === false) {
                 db.buildStudents();
+            } else{
+                fObj.studentFile = path.basename(filename,path.extname(filename));
             }
-            callback(success);
+            callback(success, fObj);
         });
 };
 
@@ -93,10 +97,13 @@ const readAssessmentFile = (db, filename, callback) => {
                     success = true;
                 }
             });
+            let fObj = {};
             if (success === false) {
                 db.buildAssessment();
+            } else {
+                fObj.assessmentFile = path.basename(filename,path.extname(filename));
             }
-            callback(success);
+            callback(success, fObj);
         });
 };
 
@@ -445,11 +452,18 @@ const processExamFile = (db, filename, exam, callback) => {
     callback = callback || function () {};
 
     function OutcomeFunc(out) {
+        let fObj = {};
         if (out) {
             db.buildAssessment();
             db.buildStudents();
+            if (exam === 1){
+                fObj.examFileOne = path.basename(filename,path.extname(filename));
+            }
+            if (exam === 2){
+                fObj.examFileTwo = path.basename(filename,path.extname(filename));
+            }
         }
-        callback(out);
+        callback(out, fObj);
     }
     detectFormat(filename, function (robj) {
         const {

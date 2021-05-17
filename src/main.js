@@ -185,20 +185,21 @@ const loadStudents = () => {
   }
 };
 
-const sendUpdate = (outcome) => {
+const sendUpdate = (outcome, args = {}) => {
   if (outcome === false) {
     dialog.showMessageBox(null, {
       message: 'I don\'t know what to make of that file!',
       detail: 'The file you selected does not conform to a format I know.  Make sure you selected the correct file.  For more information about supported file formats, check the help menu.'
     });
   }
-  sendMessage({
+  let obj = {
     examOne: data.getExamScore(1),
     examTwo: data.getExamScore(2),
     students: data.getNumberOfMatchedStudents(),
     questions: data.getNumberOfMatchedQuestions(),
     questionOptions: data.getQuestionsOptions()
-  });
+  };
+  sendMessage({...obj, ...args});
 };
 
 const produceMatchedQ = () => {
