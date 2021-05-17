@@ -30,16 +30,16 @@ window.api.receive("fromMain", (data) => {
         $("#questionOptions").text(wordOptions);
     }
     if (data.examFileOne && data.examFileOne.length > 0) {
-        $("#pretestFile").text("(" + data.examFileOne + ")");
+        $("#pretestFile").text("(\"" + data.examFileOne + "\")");
     }
     if (data.examFileTwo && data.examFileTwo.length > 0) {
-        $("#posttestFile").text("(" + data.examFileTwo + ")");
+        $("#posttestFile").text("(\"" + data.examFileTwo + "\")");
     }
     if (data.assessmentFile && data.assessmentFile.length > 0) {
-        $("#assessmentFile").text(" (you have selected " + data.assessmentFile + ")");
+        $("#assessmentFile").text(" (you have selected \"" + data.assessmentFile + "\")");
     }
     if (data.studentFile && data.studentFile.length > 0) {
-        $("#studentFile").text(" (you have selected " + data.studentFile + ") ");
+        $("#studentFile").text(" (you have selected \"" + data.studentFile + "\") ");
     }
     if (data.appVersion) {
         $("#appVersion").text(data.appVersion);
