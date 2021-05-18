@@ -31,15 +31,33 @@ window.api.receive("fromMain", (data) => {
     }
     if (data.examFileOne && data.examFileOne.length > 0) {
         $("#pretestFile").text("(\"" + data.examFileOne + "\")");
+        $("#pretest").attr("title", "\"" + data.examFileOne + "\" is loaded as the pretest");
+        $("#pretest").attr("data-original-title", "\"" + data.examFileOne + "\" is loaded as the pretest");
+        $("#pretest").tooltip('update');
+        $("#pretest").tooltip('show');
     }
     if (data.examFileTwo && data.examFileTwo.length > 0) {
         $("#posttestFile").text("(\"" + data.examFileTwo + "\")");
+        $("#posttest").attr("title", "\"" + data.examFileTwo + "\" is loaded as the posttest");
+        $("#posttest").attr("data-original-title", "\"" + data.examFileTwo + "\" is loaded as the posttest");
+        $("#posttest").tooltip('update');
+        $("#posttest").tooltip('show');
     }
     if (data.assessmentFile && data.assessmentFile.length > 0) {
+        $("#assessmentMapExtra").hide();
         $("#assessmentFile").text(" (you have selected \"" + data.assessmentFile + "\")");
+        $("#assessmentMap").attr("title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
+        $("#assessmentMap").attr("data-original-title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
+        $("#assessmentMap").tooltip('update');
+        $("#assessmentMap").tooltip('show');
     }
     if (data.studentFile && data.studentFile.length > 0) {
+        $("#studentListExtra").hide();
         $("#studentFile").text(" (you have selected \"" + data.studentFile + "\") ");
+        $("#studentList").attr("title", "\"" + data.studentFile + "\" is loaded as the student list");
+        $("#studentList").attr("data-original-title", "\"" + data.studentFile + "\" is loaded as the student list");
+        $("#studentList").tooltip('update');
+        $("#studentList").tooltip('show');
     }
     if (data.appVersion) {
         $("#appVersion").text(data.appVersion);
@@ -74,6 +92,7 @@ $(document).ready(function () {
     $("#MatchedStudentByOption").click(function () {
         window.api.send("toMain", "matchedOutputStudentsbyGroup");
     });
+    $('[data-toggle="tooltip"]').tooltip();
     window.api.send("toMain", "update");
     let scroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     if (scroll > 0) {
