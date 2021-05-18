@@ -31,6 +31,8 @@ let splashScreen;
 let data = new database();
 let mainWindow;
 
+let fileState = {};
+
 const createSplash = () => {
   if (!splashScreen || splashScreen.isDestroyed()) {
     splashScreen = new BrowserWindow({
@@ -130,6 +132,7 @@ const createWindow = () => {
     sendMessage({
       appVersion: app.getVersion()
     });
+    sendUpdate(true, fileState);
   });
 };
 
@@ -185,6 +188,22 @@ const loadStudents = () => {
   }
 };
 
+const updateFiles = (args) => {
+  if (args.examFileOne && args.examFileOne.length > 0) {
+    fileState.examFileOne = args.examFileOne;
+  }
+  if (args.examFileTwo && args.examFileTwo.length > 0) {
+    fileState.examFileTwo = args.examFileTwo;
+  }
+  if (args.assessmentFile && args.assessmentFile.length > 0) {
+    fileState.assessmentFile = args.assessmentFile;
+  }
+  if (args.studentFile && args.studentFile.length > 0) {
+    fileState.studentFile = args.studentFile;
+  }
+};
+
+
 const sendUpdate = (outcome, args = {}) => {
   if (outcome === false) {
     dialog.showMessageBox(null, {
@@ -199,7 +218,11 @@ const sendUpdate = (outcome, args = {}) => {
     questions: data.getNumberOfMatchedQuestions(),
     questionOptions: data.getQuestionsOptions()
   };
-  sendMessage({...obj, ...args});
+  sendMessage({
+    ...obj,
+    ...args
+  });
+  updateFiles(args);
 };
 
 const produceMatchedQ = () => {
