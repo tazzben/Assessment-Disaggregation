@@ -6,7 +6,7 @@ window.api.receive("fromMain", (data) => {
         let examOneCount = data.examOne.count ? Math.round(data.examOne.count).toString() + " students" : "";
         let examTwoCount = data.examTwo.count ? Math.round(data.examTwo.count).toString() + " students" : "";
         let examOneQuestions = data.examOne.questionCount ? Math.round(data.examOne.questionCount).toString() + " questions" : "";
-        let examTwoQuestions = data.examTwo.questionCount ? Math.round(data.examTwo.questionCount).toString() + " questions" : "";        
+        let examTwoQuestions = data.examTwo.questionCount ? Math.round(data.examTwo.questionCount).toString() + " questions" : "";
         let matchedStudents = data.questions ? Math.round(data.questions).toString() + " matched questions" : "";
         $("#examOne").text(examOne);
         $("#examTwo").text(examTwo);
@@ -34,14 +34,18 @@ window.api.receive("fromMain", (data) => {
         $("#pretest").attr("title", "\"" + data.examFileOne + "\" is loaded as the pretest");
         $("#pretest").attr("data-original-title", "\"" + data.examFileOne + "\" is loaded as the pretest");
         $("#pretest").tooltip('update');
-        $("#pretest").tooltip('show');
+        if (!data.startup) {
+            $("#pretest").tooltip('show');
+        }
     }
     if (data.examFileTwo && data.examFileTwo.length > 0) {
         $("#posttestFile").text("(\"" + data.examFileTwo + "\")");
         $("#posttest").attr("title", "\"" + data.examFileTwo + "\" is loaded as the posttest");
         $("#posttest").attr("data-original-title", "\"" + data.examFileTwo + "\" is loaded as the posttest");
         $("#posttest").tooltip('update');
-        $("#posttest").tooltip('show');
+        if (!data.startup) {
+            $("#posttest").tooltip('show');
+        }
     }
     if (data.assessmentFile && data.assessmentFile.length > 0) {
         $("#assessmentMapExtra").hide();
@@ -49,7 +53,9 @@ window.api.receive("fromMain", (data) => {
         $("#assessmentMap").attr("title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
         $("#assessmentMap").attr("data-original-title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
         $("#assessmentMap").tooltip('update');
-        $("#assessmentMap").tooltip('show');
+        if (!data.startup) {
+            $("#assessmentMap").tooltip('show');
+        }
     }
     if (data.studentFile && data.studentFile.length > 0) {
         $("#studentListExtra").hide();
@@ -57,7 +63,9 @@ window.api.receive("fromMain", (data) => {
         $("#studentList").attr("title", "\"" + data.studentFile + "\" is loaded as the student list");
         $("#studentList").attr("data-original-title", "\"" + data.studentFile + "\" is loaded as the student list");
         $("#studentList").tooltip('update');
-        $("#studentList").tooltip('show');
+        if (!data.startup) {
+            $("#studentList").tooltip('show');
+        }
     }
     if (data.appVersion) {
         $("#appVersion").text(data.appVersion);

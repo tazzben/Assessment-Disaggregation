@@ -132,7 +132,12 @@ const createWindow = () => {
     sendMessage({
       appVersion: app.getVersion()
     });
-    sendUpdate(true, fileState);
+    sendUpdate(true, {
+      ...fileState,
+      ...{
+        "startup": true
+      }
+    });
   });
 };
 
