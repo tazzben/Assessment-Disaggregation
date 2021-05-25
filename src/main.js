@@ -149,7 +149,7 @@ const loadPretest = () => {
       extensions: ['csv']
     }]
   });
-  if (pretestFile) {
+  if (pretestFile && pretestFile.toString().length > 0) {
     csv.processExamFile(data, pretestFile.toString(), 1, sendUpdate);
   }
 };
@@ -162,7 +162,7 @@ const loadPosttest = () => {
       extensions: ['csv']
     }]
   });
-  if (posttestFile) {
+  if (posttestFile && posttestFile.toString().length > 0) {
     csv.processExamFile(data, posttestFile.toString(), 2, sendUpdate);
   }
 };
@@ -175,7 +175,7 @@ const loadAssessmentMap = () => {
       extensions: ['csv']
     }]
   });
-  if (assessmentMap) {
+  if (assessmentMap && assessmentMap.toString().length > 0) {
     csv.readAssessmentFile(data, assessmentMap.toString(), sendUpdate);
   }
 };
@@ -188,7 +188,7 @@ const loadStudents = () => {
       extensions: ['csv']
     }]
   });
-  if (studentList) {
+  if (studentList && studentList.toString().length > 0) {
     csv.readStudentIds(data, studentList.toString(), sendUpdate);
   }
 };
@@ -238,7 +238,7 @@ const produceMatchedQ = () => {
       extensions: ['csv']
     }]
   });
-  if (matchedAnalysisQ) {
+  if (matchedAnalysisQ && matchedAnalysisQ.toString().length > 0) {
     output.questionAnalysis(data, matchedAnalysisQ);
   }
 };
@@ -251,7 +251,7 @@ const matchedStudent = (group) => {
       extensions: ['csv']
     }]
   });
-  if (matchedAnalysisS) {
+  if (matchedAnalysisS && matchedAnalysisS.toString().length > 0) {
     output.studentAnalysis(data, matchedAnalysisS, group);
   }
 };
@@ -264,7 +264,7 @@ const unmatchedExam = () => {
       extensions: ['csv']
     }]
   });
-  if (unmatchedExamstring) {
+  if (unmatchedExamstring && unmatchedExamstring.toString().length > 0) {
     output.unMatchedExamResults(data, unmatchedExamstring);
   }
 };
@@ -277,7 +277,7 @@ const unmatchedStudent = () => {
       extensions: ['csv']
     }]
   });
-  if (unmatchedStudnettring) {
+  if (unmatchedStudnettring && unmatchedStudnettring.toString().length > 0) {
     output.unMatchedStudentResults(data, unmatchedStudnettring);
   }
 
