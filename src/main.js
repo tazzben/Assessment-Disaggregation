@@ -468,6 +468,12 @@ const createMenu = async () => {
           }
         },
         {
+          label: 'Quick Start YouTube Series',
+          click: async () => {
+            await shell.openExternal('https://youtube.com/playlist?list=PL9jjyQ5QNxiy4EhUpB4nc5quLfyg8c0ko');
+          }
+        },
+        {
           label: 'Download Example Files',
           click: async () => {
             await shell.openExternal('https://www.assessmentdisaggregation.org/downloads/ww_data.zip');
