@@ -47,7 +47,7 @@ window.api.receive("fromMain", (data) => {
             $("#posttest").tooltip('show');
         }
     }
-    if (data.assessmentFile && data.assessmentFile.length > 0) {
+    if (data.assessmentFile && data.assessmentFile.trim().length > 0) {
         $("#assessmentMapExtra").hide();
         $("#assessmentFile").text(" (you have selected \"" + data.assessmentFile + "\")");
         $("#assessmentMap").attr("title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
@@ -56,12 +56,30 @@ window.api.receive("fromMain", (data) => {
         if (!data.startup) {
             $("#assessmentMap").tooltip('show');
         }
+    } else if (data.assessmentFile){
+        $("#assessmentMapExtra").show();
+        $("#assessmentFile").text("");
+        $("#assessmentMap").attr("title", "Click to load the assessment map file");
+        $("#assessmentMap").attr("data-original-title", "Click to load the assessment map file");
+        $("#assessmentMap").tooltip('update');
+        if (!data.startup) {
+            $("#assessmentMap").tooltip('show');
+        }
     }
-    if (data.studentFile && data.studentFile.length > 0) {
+    if (data.studentFile && data.studentFile.trim().length > 0) {
         $("#studentListExtra").hide();
         $("#studentFile").text(" (you have selected \"" + data.studentFile + "\") ");
         $("#studentList").attr("title", "\"" + data.studentFile + "\" is loaded as the student list");
         $("#studentList").attr("data-original-title", "\"" + data.studentFile + "\" is loaded as the student list");
+        $("#studentList").tooltip('update');
+        if (!data.startup) {
+            $("#studentList").tooltip('show');
+        }
+    } else if (data.studentFile){
+        $("#studentListExtra").show();
+        $("#studentFile").text("");
+        $("#studentList").attr("title", "Click to load the student list file");
+        $("#studentList").attr("data-original-title", "Click to load the student list file");
         $("#studentList").tooltip('update');
         if (!data.startup) {
             $("#studentList").tooltip('show');

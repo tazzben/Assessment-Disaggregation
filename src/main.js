@@ -193,17 +193,33 @@ const loadStudents = () => {
   }
 };
 
+const deleteAssessmentMap = () => {
+  data.deleteAssessment();
+  data.buildAssessment();
+  sendUpdate(true, {
+    assessmentFile: ' '
+  });
+};
+
+const deteteStudentList = () => {
+  data.deleteStudents();
+  data.buildStudents();
+  sendUpdate(true, {
+    studentFile: ' '
+  });
+};
+
 const updateFiles = (args) => {
-  if (args.examFileOne && args.examFileOne.length > 0) {
+  if (args.examFileOne) {
     fileState.examFileOne = args.examFileOne;
   }
-  if (args.examFileTwo && args.examFileTwo.length > 0) {
+  if (args.examFileTwo) {
     fileState.examFileTwo = args.examFileTwo;
   }
-  if (args.assessmentFile && args.assessmentFile.length > 0) {
+  if (args.assessmentFile) {
     fileState.assessmentFile = args.assessmentFile;
   }
-  if (args.studentFile && args.studentFile.length > 0) {
+  if (args.studentFile) {
     fileState.studentFile = args.studentFile;
   }
 };
@@ -367,6 +383,22 @@ const createMenu = async () => {
           accelerator: 'CmdOrCtrl+L',
           click: () => {
             loadStudents();
+          }
+        }
+      ]
+    },
+    {
+      label: 'Unload',
+      submenu: [{
+          label: 'Unload Assessment Map',
+          click: () => {
+            deleteAssessmentMap();
+          }
+        },
+        {
+          label: 'Unload Student List',
+          click: () => {
+            deteteStudentList();
           }
         }
       ]
