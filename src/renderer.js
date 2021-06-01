@@ -53,18 +53,15 @@ window.api.receive("fromMain", (data) => {
         $("#assessmentMap").attr("title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
         $("#assessmentMap").attr("data-original-title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
         $("#assessmentMap").tooltip('update');
-        if (!data.startup) {
-            $("#assessmentMap").tooltip('show');
-        }
-    } else if (data.assessmentFile){
+    } else if (data.assessmentFile) {
         $("#assessmentMapExtra").show();
         $("#assessmentFile").text("");
         $("#assessmentMap").attr("title", "Click to load the assessment map file");
         $("#assessmentMap").attr("data-original-title", "Click to load the assessment map file");
         $("#assessmentMap").tooltip('update');
-        if (!data.startup) {
-            $("#assessmentMap").tooltip('show');
-        }
+    }
+    if (!data.startup && data.assessmentFile) {
+        $("#assessmentMap").tooltip('show');
     }
     if (data.studentFile && data.studentFile.trim().length > 0) {
         $("#studentListExtra").hide();
@@ -72,18 +69,15 @@ window.api.receive("fromMain", (data) => {
         $("#studentList").attr("title", "\"" + data.studentFile + "\" is loaded as the student list");
         $("#studentList").attr("data-original-title", "\"" + data.studentFile + "\" is loaded as the student list");
         $("#studentList").tooltip('update');
-        if (!data.startup) {
-            $("#studentList").tooltip('show');
-        }
-    } else if (data.studentFile){
+    } else if (data.studentFile) {
         $("#studentListExtra").show();
         $("#studentFile").text("");
         $("#studentList").attr("title", "Click to load the student list file");
         $("#studentList").attr("data-original-title", "Click to load the student list file");
         $("#studentList").tooltip('update');
-        if (!data.startup) {
-            $("#studentList").tooltip('show');
-        }
+    }
+    if (!data.startup && data.studentFile) {
+        $("#studentList").tooltip('show');
     }
     if (data.appVersion) {
         $("#appVersion").text(data.appVersion);
