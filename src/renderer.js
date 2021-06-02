@@ -49,16 +49,20 @@ window.api.receive("fromMain", (data) => {
     }
     if (data.assessmentFile && data.assessmentFile.trim().length > 0) {
         $("#assessmentMapExtra").hide();
-        $("#assessmentFile").text(" (you have selected \"" + data.assessmentFile + "\")");
         $("#assessmentMap").attr("title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
         $("#assessmentMap").attr("data-original-title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
         $("#assessmentMap").tooltip('update');
+        $("#assessmentFileText").attr("title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
+        $("#assessmentFileText").attr("data-original-title", "\"" + data.assessmentFile + "\" is loaded as the assessment map");
+        $("#assessmentFileText").tooltip('update');
     } else if (data.assessmentFile) {
         $("#assessmentMapExtra").show();
-        $("#assessmentFile").text("");
         $("#assessmentMap").attr("title", "Click to load the assessment map file");
         $("#assessmentMap").attr("data-original-title", "Click to load the assessment map file");
         $("#assessmentMap").tooltip('update');
+        $("#assessmentFileText").attr("title", "No assessment map is loaded");
+        $("#assessmentFileText").attr("data-original-title", "No assessment map is loaded");
+        $("#assessmentFileText").tooltip('update');
     }
     if (!data.startup && data.assessmentFile) {
         $("#assessmentMap").tooltip('show');
