@@ -30,7 +30,7 @@ window.api.receive("fromMain", (data) => {
         $("#questionOptions").text(wordOptions);
     }
     if (data.examFileOne && data.examFileOne.length > 0) {
-        $("#pretestFile").text("(\"" + data.examFileOne + "\")");
+        $("#pretestFile").text(" - Loaded");
         $("#pretest").attr("title", "\"" + data.examFileOne + "\" is loaded as the pretest");
         $("#pretest").attr("data-original-title", "\"" + data.examFileOne + "\" is loaded as the pretest");
         $("#pretest").tooltip('update');
@@ -39,7 +39,7 @@ window.api.receive("fromMain", (data) => {
         }
     }
     if (data.examFileTwo && data.examFileTwo.length > 0) {
-        $("#posttestFile").text("(\"" + data.examFileTwo + "\")");
+        $("#posttestFile").text(" - Loaded");
         $("#posttest").attr("title", "\"" + data.examFileTwo + "\" is loaded as the posttest");
         $("#posttest").attr("data-original-title", "\"" + data.examFileTwo + "\" is loaded as the posttest");
         $("#posttest").tooltip('update');
@@ -69,16 +69,20 @@ window.api.receive("fromMain", (data) => {
     }
     if (data.studentFile && data.studentFile.trim().length > 0) {
         $("#studentListExtra").hide();
-        $("#studentFile").text(" (you have selected \"" + data.studentFile + "\") ");
         $("#studentList").attr("title", "\"" + data.studentFile + "\" is loaded as the student list");
         $("#studentList").attr("data-original-title", "\"" + data.studentFile + "\" is loaded as the student list");
         $("#studentList").tooltip('update');
+        $("#studentFileText").attr("title", "\"" + data.studentFile + "\" is loaded as the student list");
+        $("#studentFileText").attr("data-original-title", "\"" + data.studentFile + "\" is loaded as the student list");
+        $("#studentFileText").tooltip('update');
     } else if (data.studentFile) {
         $("#studentListExtra").show();
-        $("#studentFile").text("");
         $("#studentList").attr("title", "Click to load the student list file");
         $("#studentList").attr("data-original-title", "Click to load the student list file");
         $("#studentList").tooltip('update');
+        $("#studentFileText").attr("title", "No student list is loaded");
+        $("#studentFileText").attr("data-original-title", "No student list is loaded");
+        $("#studentFileText").tooltip('update');
     }
     if (!data.startup && data.studentFile) {
         $("#studentList").tooltip('show');
@@ -101,10 +105,10 @@ $(document).ready(function () {
     $("#posttest").click(function () {
         window.api.send("toMain", "posttest");
     });
-    $("#assessmentMap").click(function () {
+    $("#assessmentMap,#assessmentFileText").click(function () {
         window.api.send("toMain", "map");
     });
-    $("#studentList").click(function () {
+    $("#studentList,#studentFileText").click(function () {
         window.api.send("toMain", "students");
     });
     $("#MatchedQuestion").click(function () {

@@ -518,6 +518,12 @@ const createMenu = async () => {
           }
         },
         {
+          label: 'Schedule a Zoom Appointment',
+          click: async () => {
+            await shell.openExternal('https://assessmentdisaggregation.org/#zoom')
+          }
+        },
+        {
           label: 'Splash Startup',
           click: () => {
             createSplash();
