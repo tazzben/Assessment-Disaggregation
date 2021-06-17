@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-The current version of the application is 0.8.x.  All security updates will 
+The current version of the application is 1.1.x.  All security updates will 
 be applied as a PATCH following the semantic versioning standards.  Updates 
 are applied automatically.
 
