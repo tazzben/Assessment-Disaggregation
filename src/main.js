@@ -36,6 +36,7 @@ let fileState = {};
 const createSplash = () => {
   if (!splashScreen || splashScreen.isDestroyed()) {
     splashScreen = new BrowserWindow({
+      show: false,
       width: 960,
       height: 408,
       frame: false,
@@ -50,6 +51,9 @@ const createSplash = () => {
       }
     });
     splashScreen.loadFile(path.join(__dirname, 'splash.html'));
+    splashScreen.once('ready-to-show', () => {
+      splashScreen.show();
+    });
   }
 };
 
@@ -72,6 +76,7 @@ const createStartSplash = async () => {
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
+    show: false,
     width: 1000,
     height: 900,
     resizable: false,
@@ -127,6 +132,10 @@ const createWindow = () => {
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
   mainWindow.setTouchBar(touchBar);
+
+  mainWindow.once('ready-to-show', () => { 
+    mainWindow.show();
+  });
 
   mainWindow.webContents.once('dom-ready', () => {
     sendMessage({
