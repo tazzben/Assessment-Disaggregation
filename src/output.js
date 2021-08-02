@@ -40,7 +40,7 @@ const calcRZero = (NL, PL, RL) => {
 
 const sumReducer = (accumulator, currentValue) => accumulator + currentValue;
 
-const questionAnalysis = (db, filename) => {
+const questionAnalysis = (db, filename, summary = false) => {
     let exportArray = [];
     const dataset = db.buildMatched();
     for (let row of dataset) {
@@ -137,6 +137,28 @@ const questionAnalysis = (db, filename) => {
             }
         ]
     });
+    if (summary) {
+        let r = {
+            Q: 'Averages',
+            PL: exportArray.reduce((r, c)=> r + c.PL, 0) / exportArray.length,
+            RL: exportArray.reduce((r, c)=> r + c.RL, 0) / exportArray.length,
+            ZL: exportArray.reduce((r, c)=> r + c.ZL, 0) / exportArray.length,
+            NL: exportArray.reduce((r, c)=> r + c.NL, 0) / exportArray.length,
+            PreTest: exportArray.reduce((r, c)=> r + c.PreTest, 0) / exportArray.length,
+            PostTest: exportArray.reduce((r, c)=> r + c.PostTest, 0) / exportArray.length,
+            Delta: exportArray.reduce((r, c)=> r + c.Delta, 0) / exportArray.length,
+            Gamma: exportArray.reduce((r, c)=> r + c.Gamma, 0) / exportArray.length,
+            Mu: exportArray.reduce((r, c)=> r + c.Mu, 0) / exportArray.length,
+            Alpha: exportArray.reduce((r, c)=> r + c.Alpha, 0) / exportArray.length,
+            Flow: exportArray.reduce((r, c)=> r + c.Flow, 0) / exportArray.length,
+            GammaGain: exportArray.reduce((r, c)=> r + c.GammaGain, 0) / exportArray.length,
+            R: '',
+            GammaZero: exportArray.reduce((r, c)=> r + c.GammaZero, 0) / exportArray.length,
+            GammaGainZero: exportArray.reduce((r, c)=> r + c.GammaGainZero, 0) / exportArray.length,
+            RZero: ''
+        };
+        exportArray.push(r);
+    }
     csvWriter.writeRecords(exportArray).then(() => {
         console.log('...Done');
     });

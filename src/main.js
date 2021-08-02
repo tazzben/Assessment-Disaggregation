@@ -255,7 +255,8 @@ const sendUpdate = (outcome, args = {}) => {
   updateFiles(args);
 };
 
-const produceMatchedQ = () => {
+const produceMatchedQ = async () => {
+  const summaryOption = await settings.get('summaryOption') || false;
   const matchedAnalysisQ = dialog.showSaveDialogSync(mainWindow, {
     properties: ['openFile'],
     filters: [{
@@ -264,7 +265,7 @@ const produceMatchedQ = () => {
     }]
   });
   if (matchedAnalysisQ && matchedAnalysisQ.toString().length > 0) {
-    output.questionAnalysis(data, matchedAnalysisQ);
+    output.questionAnalysis(data, matchedAnalysisQ, summaryOption);
   }
 };
 
@@ -317,6 +318,7 @@ const changeQuestionOptionDefault = async (options) => {
 
 const createMenu = async () => {
   let numOptions = await settings.get('options');
+  let summaryOption = await settings.get('summaryOption') || false;
   numOptions = (Number.isInteger(numOptions)) ? numOptions : 4;
   data.setQuestionOptions(numOptions);
   const isMac = process.platform === 'darwin';
@@ -496,6 +498,15 @@ const createMenu = async () => {
           checked: (numOptions == 6) ? true : false,
           click: () => {
             changeQuestionOptionDefault(6);
+          }
+        },
+        {
+          label: 'Question Analysis Summary Row',
+          type: 'checkbox',
+          checked: (summaryOption) ? true : false,
+          click: async () => {
+            summaryOption = (summaryOption) ? false : true;
+            await settings.set('summaryOption', summaryOption);            
           }
         }
       ]
