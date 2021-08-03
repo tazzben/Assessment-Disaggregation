@@ -137,7 +137,7 @@ const questionAnalysis = (db, filename, summary = false) => {
             }
         ]
     });
-    if (summary) {
+    if (summary && exportArray.length > 0) {
         let r = {
             Q: 'Averages',
             PL: exportArray.reduce((r, c)=> r + c.PL, 0) / exportArray.length,
