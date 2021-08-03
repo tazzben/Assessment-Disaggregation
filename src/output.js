@@ -65,6 +65,29 @@ const questionAnalysis = (db, filename, summary = false) => {
         };
         exportArray.push(r);
     }
+
+    if (summary && exportArray.length > 0) {
+        let r = {
+            Q: 'Averages',
+            PL: exportArray.reduce((r, c)=> r + c.PL, 0) / exportArray.length,
+            RL: exportArray.reduce((r, c)=> r + c.RL, 0) / exportArray.length,
+            ZL: exportArray.reduce((r, c)=> r + c.ZL, 0) / exportArray.length,
+            NL: exportArray.reduce((r, c)=> r + c.NL, 0) / exportArray.length,
+            PreTest: exportArray.reduce((r, c)=> r + c.PreTest, 0) / exportArray.length,
+            PostTest: exportArray.reduce((r, c)=> r + c.PostTest, 0) / exportArray.length,
+            Delta: exportArray.reduce((r, c)=> r + c.Delta, 0) / exportArray.length,
+            Gamma: exportArray.reduce((r, c)=> r + c.Gamma, 0) / exportArray.length,
+            Mu: exportArray.reduce((r, c)=> r + c.Mu, 0) / exportArray.length,
+            Alpha: exportArray.reduce((r, c)=> r + c.Alpha, 0) / exportArray.length,
+            Flow: exportArray.reduce((r, c)=> r + c.Flow, 0) / exportArray.length,
+            GammaGain: exportArray.reduce((r, c)=> r + c.GammaGain, 0) / exportArray.length,
+            R: '',
+            GammaZero: exportArray.reduce((r, c)=> r + c.GammaZero, 0) / exportArray.length,
+            GammaGainZero: exportArray.reduce((r, c)=> r + c.GammaGainZero, 0) / exportArray.length,
+            RZero: ''
+        };
+        exportArray.push(r);
+    }
     const csvWriter = createCsvWriter({
         path: filename,
         header: [{
@@ -137,34 +160,12 @@ const questionAnalysis = (db, filename, summary = false) => {
             }
         ]
     });
-    if (summary && exportArray.length > 0) {
-        let r = {
-            Q: 'Averages',
-            PL: exportArray.reduce((r, c)=> r + c.PL, 0) / exportArray.length,
-            RL: exportArray.reduce((r, c)=> r + c.RL, 0) / exportArray.length,
-            ZL: exportArray.reduce((r, c)=> r + c.ZL, 0) / exportArray.length,
-            NL: exportArray.reduce((r, c)=> r + c.NL, 0) / exportArray.length,
-            PreTest: exportArray.reduce((r, c)=> r + c.PreTest, 0) / exportArray.length,
-            PostTest: exportArray.reduce((r, c)=> r + c.PostTest, 0) / exportArray.length,
-            Delta: exportArray.reduce((r, c)=> r + c.Delta, 0) / exportArray.length,
-            Gamma: exportArray.reduce((r, c)=> r + c.Gamma, 0) / exportArray.length,
-            Mu: exportArray.reduce((r, c)=> r + c.Mu, 0) / exportArray.length,
-            Alpha: exportArray.reduce((r, c)=> r + c.Alpha, 0) / exportArray.length,
-            Flow: exportArray.reduce((r, c)=> r + c.Flow, 0) / exportArray.length,
-            GammaGain: exportArray.reduce((r, c)=> r + c.GammaGain, 0) / exportArray.length,
-            R: '',
-            GammaZero: exportArray.reduce((r, c)=> r + c.GammaZero, 0) / exportArray.length,
-            GammaGainZero: exportArray.reduce((r, c)=> r + c.GammaGainZero, 0) / exportArray.length,
-            RZero: ''
-        };
-        exportArray.push(r);
-    }
     csvWriter.writeRecords(exportArray).then(() => {
         console.log('...Done');
     });
 };
 
-const studentAnalysis = (db, filename, group = false) => {
+const studentAnalysis = (db, filename, group = false, summary = false) => {
     let exportArray = [];
     let dataset = db.buildMatched(true);
 
@@ -234,6 +235,31 @@ const studentAnalysis = (db, filename, group = false) => {
         rowGroup["c"].push(row.c);
         currentOptions = row.Options;
         currentId = row.id;
+    }
+    if (summary && exportArray.length > 0) {
+        let totalQuestions = exportArray.reduce((r, c)=> r + c.Questions, 0);
+        let r = {
+            id: 'Averages',
+            Options: '',
+            Questions: totalQuestions,
+            PL: exportArray.reduce((r, c)=> r + (c.Questions * c.PL), 0) / totalQuestions,
+            RL: exportArray.reduce((r, c)=> r + (c.Questions * c.RL), 0) / totalQuestions,
+            ZL: exportArray.reduce((r, c)=> r + (c.Questions * c.ZL), 0) / totalQuestions,
+            NL: exportArray.reduce((r, c)=> r + (c.Questions * c.NL), 0) / totalQuestions,
+            PreTest: exportArray.reduce((r, c)=> r + (c.Questions * c.PreTest), 0) / totalQuestions,
+            PostTest: exportArray.reduce((r, c)=> r + (c.Questions * c.PostTest), 0) / totalQuestions,
+            Delta: exportArray.reduce((r, c)=> r + (c.Questions * c.Delta), 0) / totalQuestions,
+            Gamma: exportArray.reduce((r, c)=> r + (c.Questions * c.Gamma), 0) / totalQuestions,
+            Mu: exportArray.reduce((r, c)=> r + (c.Questions * c.Mu), 0) / totalQuestions,
+            Alpha: exportArray.reduce((r, c)=> r + (c.Questions * c.Alpha), 0) / totalQuestions,
+            Flow: exportArray.reduce((r, c)=> r + (c.Questions * c.Flow), 0) / totalQuestions,
+            GammaGain: exportArray.reduce((r, c)=> r + (c.Questions * c.GammaGain), 0) / totalQuestions,
+            R: '',
+            GammaZero: exportArray.reduce((r, c)=> r + (c.Questions * c.GammaZero), 0) / totalQuestions,
+            GammaGainZero: exportArray.reduce((r, c)=> r + (c.Questions * c.GammaGainZero), 0) / totalQuestions,
+            RZero: ''
+        };
+        exportArray.push(r);
     }
     let defaultHeader = [{
             id: 'Questions',
@@ -330,7 +356,7 @@ const studentAnalysis = (db, filename, group = false) => {
     });
 };
 
-const unMatchedStudentResults = (db, filename) => {
+const unMatchedStudentResults = (db, filename, summary = false) => {
     let exportArray = [];
     const dataset = db.buildStudentUnmatched();
     for (let row of dataset) {
@@ -341,6 +367,16 @@ const unMatchedStudentResults = (db, filename) => {
         };
         exportArray.push(r);
     }
+
+    if (summary && exportArray.length > 0) {
+        let r = {
+            id: 'Averages',
+            Exam1: exportArray.reduce((r, c)=> r + c.Exam1, 0) / exportArray.length,
+            Exam2: exportArray.reduce((r, c)=> r + c.Exam2, 0) / exportArray.length
+        };
+        exportArray.push(r);
+    }
+
     const csvWriter = createCsvWriter({
         path: filename,
         header: [{
@@ -363,7 +399,7 @@ const unMatchedStudentResults = (db, filename) => {
     });
 };
 
-const unMatchedExamResults = (db, filename) => {
+const unMatchedExamResults = (db, filename, summary = false) => {
     let exportArray = [];
     const dataset = db.buildExamUnmatched();
     for (let row of dataset) {
@@ -375,6 +411,17 @@ const unMatchedExamResults = (db, filename) => {
         };
         exportArray.push(r);
     }
+
+    if (summary && exportArray.length > 0) {
+        let r = {
+            Q: 'Averages',
+            Exam1: exportArray.reduce((r, c)=> r + c.Exam1, 0) / exportArray.length,
+            Exam2: exportArray.reduce((r, c)=> r + c.Exam2, 0) / exportArray.length,
+            Options: ''
+        };
+        exportArray.push(r);
+    }
+
     const csvWriter = createCsvWriter({
         path: filename,
         header: [{

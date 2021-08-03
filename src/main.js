@@ -269,7 +269,8 @@ const produceMatchedQ = async () => {
   }
 };
 
-const matchedStudent = (group) => {
+const matchedStudent = async (group) => {
+  const summaryOption = await settings.get('summaryOption') || false;
   const matchedAnalysisS = dialog.showSaveDialogSync(mainWindow, {
     properties: ['openFile'],
     filters: [{
@@ -278,11 +279,12 @@ const matchedStudent = (group) => {
     }]
   });
   if (matchedAnalysisS && matchedAnalysisS.toString().length > 0) {
-    output.studentAnalysis(data, matchedAnalysisS, group);
+    output.studentAnalysis(data, matchedAnalysisS, group, summaryOption);
   }
 };
 
-const unmatchedExam = () => {
+const unmatchedExam = async () => {
+  const summaryOption = await settings.get('summaryOption') || false;
   const unmatchedExamstring = dialog.showSaveDialogSync(mainWindow, {
     properties: ['openFile'],
     filters: [{
@@ -291,11 +293,12 @@ const unmatchedExam = () => {
     }]
   });
   if (unmatchedExamstring && unmatchedExamstring.toString().length > 0) {
-    output.unMatchedExamResults(data, unmatchedExamstring);
+    output.unMatchedExamResults(data, unmatchedExamstring, summaryOption);
   }
 };
 
-const unmatchedStudent = () => {
+const unmatchedStudent = async () => {
+  const summaryOption = await settings.get('summaryOption') || false;
   const unmatchedStudnettring = dialog.showSaveDialogSync(mainWindow, {
     properties: ['openFile'],
     filters: [{
@@ -304,7 +307,7 @@ const unmatchedStudent = () => {
     }]
   });
   if (unmatchedStudnettring && unmatchedStudnettring.toString().length > 0) {
-    output.unMatchedStudentResults(data, unmatchedStudnettring);
+    output.unMatchedStudentResults(data, unmatchedStudnettring, summaryOption);
   }
 
 };
@@ -501,7 +504,7 @@ const createMenu = async () => {
           }
         },
         {
-          label: 'Question Analysis Summary Row',
+          label: 'Include Summary Row',
           type: 'checkbox',
           checked: (summaryOption) ? true : false,
           click: async () => {
