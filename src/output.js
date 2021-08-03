@@ -241,7 +241,7 @@ const studentAnalysis = (db, filename, group = false, summary = false) => {
         let r = {
             id: 'Averages',
             Options: '',
-            Questions: totalQuestions,
+            Questions: '',
             PL: exportArray.reduce((r, c)=> r + (c.Questions * c.PL), 0) / totalQuestions,
             RL: exportArray.reduce((r, c)=> r + (c.Questions * c.RL), 0) / totalQuestions,
             ZL: exportArray.reduce((r, c)=> r + (c.Questions * c.ZL), 0) / totalQuestions,
