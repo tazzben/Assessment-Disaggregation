@@ -47,7 +47,8 @@ const createSplash = () => {
         nodeIntegration: false,
         contextIsolation: true,
         enableRemoteModule: false,
-        worldSafeExecuteJavaScript: true
+        worldSafeExecuteJavaScript: true,
+        nativeWindowOpen: true
       }
     });
     splashScreen.loadFile(path.join(__dirname, 'splash.html'));
@@ -85,7 +86,8 @@ const createWindow = () => {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false,
-      worldSafeExecuteJavaScript: true
+      worldSafeExecuteJavaScript: true,
+      nativeWindowOpen: true
     }
   });
 
