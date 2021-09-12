@@ -86,7 +86,32 @@ const questionAnalysis = (db, filename, summary = false) => {
             GammaGainZero: exportArray.reduce((r, c)=> r + c.GammaGainZero, 0) / exportArray.length,
             RZero: ''
         };
-        exportArray.push(r);
+        
+        if (exportArray.length > 1){
+            let s = {
+                Q: 'St Dev',
+                PL: (exportArray.reduce((p, c)=> p + (c.PL - r.PL) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                RL: (exportArray.reduce((p, c)=> p + (c.RL - r.RL) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                ZL: (exportArray.reduce((p, c)=> p + (c.ZL - r.ZL) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                NL: (exportArray.reduce((p, c)=> p + (c.NL - r.NL) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                PreTest: (exportArray.reduce((p, c)=> p + (c.PreTest - r.PreTest) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                PostTest: (exportArray.reduce((p, c)=> p + (c.PostTest - r.PostTest) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                Delta: (exportArray.reduce((p, c)=> p + (c.Delta - r.Delta) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                Gamma: (exportArray.reduce((p, c)=> p + (c.Gamma - r.Gamma) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                Mu: (exportArray.reduce((p, c)=> p + (c.Mu - r.Mu) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                Alpha: (exportArray.reduce((p, c)=> p + (c.Alpha - r.Alpha) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                Flow: (exportArray.reduce((p, c)=> p + (c.Flow - r.Flow) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                GammaGain: (exportArray.reduce((p, c)=> p + (c.GammaGain - r.GammaGain) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                R: '',
+                GammaZero: (exportArray.reduce((p, c)=> p + (c.GammaZero - r.GammaZero) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                GammaGainZero: (exportArray.reduce((p, c)=> p + (c.GammaGainZero - r.GammaGainZero) ** 2, 0) * 1 / (exportArray.length - 1)) ** 0.5,
+                RZero: ''
+            };
+            exportArray.push(r);
+            exportArray.push(s);
+        } else {
+            exportArray.push(r);
+        }      
     }
     const csvWriter = createCsvWriter({
         path: filename,
@@ -193,6 +218,7 @@ const studentAnalysis = (db, filename, group = false, summary = false) => {
     const clearGroup = JSON.parse(JSON.stringify(rowGroup));
     let currentOptions = 0;
     let currentId = 0;
+    let studentIds = [];
     for (let row of dataset) {
         if (!((row.Options == currentOptions || group) && row.id == currentId || (currentOptions == 0 && currentId == 0))) {
             let totQs = rowGroup["c"].reduce(sumReducer, 0);
@@ -218,6 +244,7 @@ const studentAnalysis = (db, filename, group = false, summary = false) => {
                 RZero: calcRZero(rowGroup["NL"].reduce(sumReducer, 0) / totQs, rowGroup["PL"].reduce(sumReducer, 0) / totQs, rowGroup["RL"].reduce(sumReducer, 0) / totQs)
             };
             exportArray.push(r);
+            studentIds.push(r.id);
             rowGroup = JSON.parse(JSON.stringify(clearGroup));
         }
         rowGroup["PL"].push(row.PL * row.c);
@@ -238,6 +265,7 @@ const studentAnalysis = (db, filename, group = false, summary = false) => {
     }
     if (summary && exportArray.length > 0) {
         let totalQuestions = exportArray.reduce((r, c)=> r + c.Questions, 0);
+        
         let r = {
             id: 'Averages',
             Options: '',
@@ -259,7 +287,39 @@ const studentAnalysis = (db, filename, group = false, summary = false) => {
             GammaGainZero: exportArray.reduce((r, c)=> r + (c.Questions * c.GammaGainZero), 0) / totalQuestions,
             RZero: ''
         };
-        exportArray.push(r);
+
+        if (exportArray.length > 1){
+            const uStudentIds = [...new Set(studentIds)];
+            const basselM = (uStudentIds.length / (uStudentIds.length - 1)) * (1 / totalQuestions);
+
+            let s = {
+                id: (group) ? 'St Dev' : 'Weighted St Dev',
+                Options: '',
+                Questions: '',
+                PL: (exportArray.reduce((p, c)=> p + c.Questions * (c.PL - r.PL) ** 2, 0) * basselM) ** 0.5,
+                RL: (exportArray.reduce((p, c)=> p + c.Questions * (c.RL - r.RL) ** 2, 0) * basselM) ** 0.5,
+                ZL: (exportArray.reduce((p, c)=> p + c.Questions * (c.ZL - r.ZL) ** 2, 0) * basselM) ** 0.5,
+                NL: (exportArray.reduce((p, c)=> p + c.Questions * (c.NL - r.NL) ** 2, 0) * basselM) ** 0.5,
+                PreTest: (exportArray.reduce((p, c)=> p + c.Questions * (c.PreTest - r.PreTest) ** 2, 0) * basselM) ** 0.5,
+                PostTest: (exportArray.reduce((p, c)=> p + c.Questions * (c.PostTest - r.PostTest) ** 2, 0) * basselM) ** 0.5,
+                Delta: (exportArray.reduce((p, c)=> p + c.Questions  * (c.Delta - r.Delta) ** 2, 0) * basselM) ** 0.5,
+                Gamma: (exportArray.reduce((p, c)=> p + c.Questions * (c.Gamma - r.Gamma) ** 2, 0) * basselM) ** 0.5,
+                Mu: (exportArray.reduce((p, c)=> p + c.Questions * (c.Mu - r.Mu) ** 2, 0) * basselM) ** 0.5,
+                Alpha: (exportArray.reduce((p, c)=> p + c.Questions * (c.Alpha - r.Alpha) ** 2, 0) * basselM) ** 0.5,
+                Flow: (exportArray.reduce((p, c)=> p + c.Questions * (c.Flow - r.Flow) ** 2, 0) * basselM) ** 0.5,
+                GammaGain: (exportArray.reduce((p, c)=> p + c.Questions * (c.GammaGain - r.GammaGain) ** 2, 0) * basselM) ** 0.5,
+                R: '',
+                GammaZero: (exportArray.reduce((p, c)=> p + c.Questions * (c.GammaZero - r.GammaZero) ** 2, 0) * basselM) ** 0.5,
+                GammaGainZero: (exportArray.reduce((p, c)=> p + c.Questions * (c.GammaGainZero - r.GammaGainZero) ** 2, 0) * basselM) ** 0.5,
+                RZero: ''
+            };
+
+            exportArray.push(r);
+            exportArray.push(s);
+        } else {
+            exportArray.push(r);
+        }   
+        
     }
     let defaultHeader = [{
             id: 'Questions',
@@ -374,7 +434,17 @@ const unMatchedStudentResults = (db, filename, summary = false) => {
             Exam1: exportArray.reduce((r, c)=> r + c.Exam1, 0) / exportArray.length,
             Exam2: exportArray.reduce((r, c)=> r + c.Exam2, 0) / exportArray.length
         };
-        exportArray.push(r);
+        if (exportArray.length > 1) {
+            let s = {
+                id: 'St Dev',
+                Exam1: (exportArray.reduce((p, c)=> p + (c.Exam1 - r.Exam1) ** 2, 0) / (exportArray.length - 1)) ** 0.5,
+                Exam2: (exportArray.reduce((p, c)=> p + (c.Exam2 - r.Exam2) ** 2, 0) / (exportArray.length - 1)) ** 0.5
+            };
+            exportArray.push(r);
+            exportArray.push(s);
+        } else {
+            exportArray.push(r);
+        }
     }
 
     const csvWriter = createCsvWriter({
@@ -419,7 +489,19 @@ const unMatchedExamResults = (db, filename, summary = false) => {
             Exam2: exportArray.reduce((r, c)=> r + c.Exam2, 0) / exportArray.length,
             Options: ''
         };
-        exportArray.push(r);
+        
+        if (exportArray.length > 1) {
+            let s = {
+                Q: 'St Dev',
+                Exam1: (exportArray.reduce((p, c)=> p + (c.Exam1 - r.Exam1) ** 2, 0) / (exportArray.length - 1)) ** 0.5,
+                Exam2: (exportArray.reduce((p, c)=> p + (c.Exam2 - r.Exam2) ** 2, 0) / (exportArray.length - 1)) ** 0.5,
+                Options: ''
+            };
+            exportArray.push(r);
+            exportArray.push(s);
+        } else {
+            exportArray.push(r);
+        }
     }
 
     const csvWriter = createCsvWriter({

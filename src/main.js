@@ -506,7 +506,7 @@ const createMenu = async () => {
           }
         },
         {
-          label: 'Include Summary Row',
+          label: 'Include Summary Rows',
           type: 'checkbox',
           checked: (summaryOption) ? true : false,
           click: async () => {
