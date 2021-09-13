@@ -212,7 +212,7 @@ const deleteAssessmentMap = () => {
   });
 };
 
-const deteteStudentList = () => {
+const deleteStudentList = () => {
   data.deleteStudents();
   data.buildStudents();
   sendUpdate(true, {
@@ -301,15 +301,15 @@ const unmatchedExam = async () => {
 
 const unmatchedStudent = async () => {
   const summaryOption = await settings.get('summaryOption') || false;
-  const unmatchedStudnettring = dialog.showSaveDialogSync(mainWindow, {
+  const unmatchedStudentFile = dialog.showSaveDialogSync(mainWindow, {
     properties: ['openFile'],
     filters: [{
       name: 'CSV',
       extensions: ['csv']
     }]
   });
-  if (unmatchedStudnettring && unmatchedStudnettring.toString().length > 0) {
-    output.unMatchedStudentResults(data, unmatchedStudnettring, summaryOption);
+  if (unmatchedStudentFile && unmatchedStudentFile.toString().length > 0) {
+    output.unMatchedStudentResults(data, unmatchedStudentFile, summaryOption);
   }
 
 };
@@ -414,7 +414,7 @@ const createMenu = async () => {
         {
           label: 'Unload Student List',
           click: () => {
-            deteteStudentList();
+            deleteStudentList();
           }
         }
       ]
