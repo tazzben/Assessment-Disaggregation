@@ -111,7 +111,18 @@ const questionAnalysis = (db, filename, summary = false) => {
             exportArray.push(s);
         } else {
             exportArray.push(r);
-        }      
+        }
+        exportArray.push({
+            Q: '',
+        });
+        exportArray.push({
+            Q: 'Number of matched students:',
+            PL: db.getNumberOfMatchedStudents()
+        }); 
+        exportArray.push({
+            Q: 'Number of matched questions:',
+            PL: db.getNumberOfMatchedQuestions()
+        });     
     }
     const csvWriter = createCsvWriter({
         path: filename,
@@ -267,7 +278,7 @@ const studentAnalysis = (db, filename, group = false, summary = false) => {
         let totalQuestions = exportArray.reduce((r, c)=> r + c.Questions, 0);
         
         let r = {
-            id: 'Averages',
+            id: (group) ? 'Averages' : 'Weighted Averages',
             Options: '',
             Questions: '',
             PL: exportArray.reduce((r, c)=> r + (c.Questions * c.PL), 0) / totalQuestions,
@@ -318,8 +329,22 @@ const studentAnalysis = (db, filename, group = false, summary = false) => {
             exportArray.push(s);
         } else {
             exportArray.push(r);
-        }   
+        }
+           
+        exportArray.push({
+            id: '',
+        });
+        let mStudents = {
+            id: 'Number of matched students:',
+        };
         
+        if (group) {
+            mStudents['Questions'] = db.getNumberOfMatchedStudents();
+        } else {
+            mStudents['Options'] = db.getNumberOfMatchedStudents();
+        }
+
+        exportArray.push(mStudents); 
     }
     let defaultHeader = [{
             id: 'Questions',
