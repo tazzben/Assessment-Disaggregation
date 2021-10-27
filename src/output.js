@@ -63,6 +63,8 @@ const questionAnalysis = (db, filename, summary = false) => {
             GammaGainZero: calcGammaGainZero(row.NL, row.PL, row.RL),
             RZero: calcRZero(row.NL, row.PL, row.RL)
         };
+        r.RMinSensitivity = (Math.abs(r.R) < 1) ? 'GammaGain' : 'Gamma';
+        r.RZeroMinSensitivity = (Math.abs(r.RZero) < 1) ? 'GammaGainZero' : 'GammaZero';
         exportArray.push(r);
     }
 
@@ -193,6 +195,14 @@ const questionAnalysis = (db, filename, summary = false) => {
             {
                 id: 'RZero',
                 title: 'RZero'
+            }, 
+            {
+                id: 'RMinSensitivity',
+                title: 'RMinSensitivity'
+            },
+            {
+                id: 'RZeroMinSensitivity',
+                title: 'RZeroMinSensitivity'
             }
         ]
     });
