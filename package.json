@@ -25,10 +25,10 @@
     "forge": "./forge.config.js"
   },
   "dependencies": {
-    "better-sqlite3": "^7.4.6",
+    "better-sqlite3": "^7.5.0",
     "csv-parser": "^3.0.0",
     "csv-writer": "^1.6.0",
-    "dotenv": "^12.0.3",
+    "dotenv": "^14.3.2",
     "electron-settings": "^4.0.2",
     "electron-squirrel-startup": "^1.0.0",
     "strip-bom-stream": "~4.0.0",
@@ -44,6 +44,6 @@
     "@electron-forge/publisher-github": "^6.0.0-beta.63",
     "electron": "^16.0.7",
     "electron-rebuild": "^3.2.7",
-    "eslint": "^8.6.0"
+    "eslint": "^8.7.0"
   }
 }
