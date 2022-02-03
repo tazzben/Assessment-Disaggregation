@@ -28,7 +28,7 @@
     "better-sqlite3": "^7.5.0",
     "csv-parser": "^3.0.0",
     "csv-writer": "^1.6.0",
-    "dotenv": "^15.0.0",
+    "dotenv": "^16.0.0",
     "electron-settings": "^4.0.2",
     "electron-squirrel-startup": "^1.0.0",
     "strip-bom-stream": "~4.0.0",
