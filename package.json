@@ -25,7 +25,7 @@
     "forge": "./forge.config.js"
   },
   "dependencies": {
-    "better-sqlite3": "7.5.1",
+    "better-sqlite3": "^7.5.3",
     "csv-parser": "^3.0.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.0.1",
