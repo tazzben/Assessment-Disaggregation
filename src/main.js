@@ -525,9 +525,9 @@ const createMenu = async () => {
           }
         },
         {
-          label: 'Quick Start YouTube Series',
+          label: 'Quick Start Video Series',
           click: async () => {
-            await shell.openExternal('https://youtube.com/playlist?list=PL9jjyQ5QNxiy4EhUpB4nc5quLfyg8c0ko');
+            await shell.openExternal('https://docs.assessmentdisaggregation.org/quick-start-series/');
           }
         },
         {
