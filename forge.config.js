@@ -37,31 +37,6 @@ let baseConfig = {
         "darwin"
       ]
     },
-    {
-      name: "@electron-forge/maker-dmg",
-      config: {
-        name: "Assessment Disaggregation",
-        icon: "./src/icons/icon.icns"
-      },
-      platforms: [
-        "darwin"
-      ]
-    },
-    {
-      name: "@electron-forge/maker-deb",
-      config: {
-        options: {
-          maintainer: 'Ben Smith',
-          homepage: 'https://www.assessmentdisaggregation.org/',
-          icon:"./src/icons/icon.png",
-          name: "Assessment-Disaggregation"
-        }
-      }
-    },
-    {
-      name: "@electron-forge/maker-rpm",
-      config: {}
-    }
   ],
   publishers: [{
     name: '@electron-forge/publisher-github',
