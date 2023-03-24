@@ -44,7 +44,7 @@
     "@electron-forge/maker-zip": "^6.0.5",
     "@electron-forge/publisher-github": "^6.0.5",
     "@electron/rebuild": "^3.2.10",
-    "electron": "^23.1.4",
+    "electron": "^23.2.0",
     "eslint": "^8.36.0"
   }
 }
