@@ -1,6 +1,6 @@
 const fs = require('fs')
 const csv = require('csv-parser');
-const stripBom = require('strip-bom-stream');
+const stripBom = require('remove-bom-stream');
 const path = require('path');
 
 
@@ -21,7 +21,7 @@ const readStudentIds = (db, filename, callback) => {
     let success = false;
     const headers = ['id', 'student id', 'external id', 'zipgrade id', 'ids', 'sis_id', 'id number'];
     fs.createReadStream(filename)
-        .pipe(stripBom())
+        .pipe(stripBom('utf-8'))
         .pipe(csv({
             mapHeaders: ({
                 header,
@@ -60,7 +60,7 @@ const readAssessmentFile = (db, filename, callback) => {
         options: ['options', 'answers', 'distractors', 'guess', 'guessing', 'probability', 'p']
     };
     fs.createReadStream(filename)
-        .pipe(stripBom())
+        .pipe(stripBom('utf-8'))
         .pipe(csv({
             mapHeaders: ({
                 header,
@@ -111,7 +111,7 @@ const detectFormat = (filename, callback) => {
     callback = callback || function () {};
     let results = [];
     fs.createReadStream(filename)
-        .pipe(stripBom())
+        .pipe(stripBom('utf-8'))
         .pipe(csv({
             headers: false
         }))
@@ -218,7 +218,7 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
     let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sis_id'];
     let success = false;
     fs.createReadStream(filename)
-        .pipe(stripBom())
+        .pipe(stripBom('utf-8'))
         .pipe(csv({
             mapHeaders: ({
                 header,
@@ -265,7 +265,7 @@ const processGoogleQuizData = (db, exam, filename, callback) => {
     let usernameKeys = ['username', 'usernames'];
     let success = false;
     fs.createReadStream(filename)
-        .pipe(stripBom())
+        .pipe(stripBom('utf-8'))
         .pipe(csv({
             mapHeaders: ({
                 header,
@@ -317,7 +317,7 @@ const processBlackboardData = (db, exam, filename, callback) => {
     let usernameKeys = ['username', 'usernames'];
     let success = false;
     fs.createReadStream(filename)
-        .pipe(stripBom())
+        .pipe(stripBom('utf-8'))
         .pipe(csv({
             mapHeaders: ({
                 header,
