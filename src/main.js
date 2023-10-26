@@ -15,9 +15,8 @@ const {
 
 if (require('electron-squirrel-startup')) app.quit();
 
-require('update-electron-app')({
-  notifyUser: false
-});
+const { updateElectronApp } = require('update-electron-app');
+updateElectronApp();
 
 let settings = require('electron-settings');
 

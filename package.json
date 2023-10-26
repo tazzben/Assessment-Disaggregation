@@ -32,7 +32,7 @@
     "electron-settings": "^4.0.2",
     "electron-squirrel-startup": "^1.0.0",
     "remove-bom-stream": "^2.0.0",
-    "update-electron-app": "^2.0.1"
+    "update-electron-app": "^3.0.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.4.2",
@@ -43,7 +43,7 @@
     "@electron-forge/maker-zip": "^6.4.2",
     "@electron-forge/publisher-github": "^6.4.2",
     "@electron/rebuild": "^3.3.0",
-    "electron": "^27.0.1",
-    "eslint": "^8.51.0"
+    "electron": "^27.0.2",
+    "eslint": "^8.52.0"
   }
 }
