@@ -18,7 +18,8 @@ let baseConfig = {
     },
     osxNotarize: {
       appleId: process.env.APPLEID,
-      appleIdPassword: process.env.APPLEID_PASSWORD
+      appleIdPassword: process.env.APPLEID_PASSWORD,
+      teamId: process.env.APPLE_TEAMID
     }
   },
   makers: [{
