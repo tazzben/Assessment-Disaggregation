@@ -38,17 +38,7 @@ let baseConfig = {
         "darwin"
       ]
     },
-  ],
-  publishers: [{
-    name: '@electron-forge/publisher-github',
-    config: {
-      repository: {
-        owner: 'tazzben',
-        name: 'Assessment-Disaggregation'
-      },
-      authToken: process.env.GITHUB_TOKEN
-    }
-  }]
+  ]
 };
 
 module.exports = baseConfig;
