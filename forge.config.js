@@ -1,3 +1,4 @@
+const { sign } = require('crypto');
 const os = require('os');
 const path = require('path');
 
@@ -25,8 +26,7 @@ let baseConfig = {
   makers: [{
       name: "@electron-forge/maker-squirrel",
       config: {
-        certificateFile: process.env.WINDOWSCERT,
-        certificatePassword: process.env.WINDOWSPASSWORD,
+        signWithParams: '/a /tr http://timestamp.sectigo.com /td sha256 /fd sha256'
       },
       platforms: [
         "win32"
