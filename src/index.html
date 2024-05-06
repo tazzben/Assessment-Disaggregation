@@ -13,14 +13,15 @@
   <body >
 
     <header>
-      <!-- Fixed navbar -->
-      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <nav class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
+      <div class="container-fluid">
         <a class="navbar-brand">Assessment Disaggregation</a>
-      </nav>
-    </header>
-   
-    <main class="container">
-      <div class="container">
+      </div>
+    </nav>
+    </header>  
+
+    <main class="container-fluid">
+      <div class="container-fluid">
         <div class="row">
           <div class="col-sm">
             <div class="card" >
@@ -137,9 +138,11 @@
       </div>
       <div style="display:block;">&nbsp;</div>
     </main>
-    <footer class="footer bg-dark" id="footer">
-      <div class="container">
-        <p>Build <span id="appVersion"></span></p>
+    <footer class="footer bg-dark" id="footer" data-bs-theme="dark">
+      <div class="container-fluid">
+        <div class="container">
+          <p>Build <span id="appVersion"></span></p>
+        </div>
       </div>
     </footer>
     <script type="text/javascript" src="./js/jquery-3.7.1.js"></script>
