@@ -13,10 +13,10 @@ const {
   TouchBarSpacer
 } = TouchBar;
 
-if (require('electron-squirrel-startup')) app.quit();
+// if (require('electron-squirrel-startup')) app.quit();
 
-const { updateElectronApp } = require('update-electron-app');
-updateElectronApp();
+// const { updateElectronApp } = require('update-electron-app');
+// updateElectronApp();
 
 let settings = require('electron-settings');
 
