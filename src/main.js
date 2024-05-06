@@ -54,10 +54,6 @@ const createSplash = () => {
     splashScreen.once('ready-to-show', () => {
       splashScreen.show();
     });
-    if (!app.isPackaged) {
-      // Open the DevTools.
-      splashScreen.webContents.openDevTools();
-    }
   }
 };
 
@@ -141,12 +137,7 @@ const createWindow = () => {
   mainWindow.once('ready-to-show', () => { 
     mainWindow.show();
   });
-
-  if (!app.isPackaged) {
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
-  }
-
+  
   mainWindow.webContents.once('dom-ready', () => {
     sendMessage({
       appVersion: app.getVersion()
