@@ -1,7 +1,7 @@
 {
   "name": "assessment-disaggregation",
   "productName": "Assessment Disaggregation",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Measure learning using a scientifically validated method using pretest and posttest files. The software automatically reads most exam output files (Akindi, Scantron, Canvas, ZipGrade, Moodle, Google Form quizzes) without modification.",
   "main": "src/main.js",
   "repository": {
@@ -39,7 +39,7 @@
     "@electron-forge/maker-squirrel": "^7.3.1",
     "@electron-forge/maker-zip": "^7.3.1",
     "@electron/rebuild": "^3.6.0",
-    "electron": "^30.0.2",
+    "electron": "^29.3.2",
     "eslint": "^9.1.1"
   }
 }
