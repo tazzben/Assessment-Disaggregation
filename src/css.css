@@ -20,11 +20,6 @@
     padding: 60px 15px 0;
   }
 
-  .footer {
-    background-color: #f5f5f5;
-    color: #fff;
-    text-align: right;
-  }
   footer {
     position: absolute;
     bottom: 0;
@@ -32,7 +27,7 @@
     width: 100%;
   }
 
-  .footer > .container-fluid > .container {
+  .footer > .container-fluid > .footerNote {
     padding-right: 15px;
     padding-left: 15px;
     padding-top: 0.5em;

@@ -26,6 +26,8 @@ let baseConfig = {
   makers: [{
       name: "@electron-forge/maker-squirrel",
       config: {
+        iconUrl: './src/icons/icon.ico',
+        setupIcon: './src/icons/icon.ico',
         signWithParams: '/a /tr http://timestamp.sectigo.com /td sha256 /fd sha256'
       },
       platforms: [
