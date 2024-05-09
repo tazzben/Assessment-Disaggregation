@@ -7,7 +7,7 @@ const {
   shell,
   TouchBar
 } = require('electron');
-
+const os = require('os');
 const {
   TouchBarButton,
   TouchBarSpacer
@@ -15,8 +15,12 @@ const {
 
 if (require('electron-squirrel-startup')) app.quit();
 
-// const { updateElectronApp } = require('update-electron-app');
-// updateElectronApp();
+// Disable the auto-updated for Windows on ARM
+
+if (process.platform === 'darwin' || (process.platform === 'win32' && os.arch() === 'x64')) {
+  const { updateElectronApp } = require('update-electron-app');
+  updateElectronApp();
+}
 
 let settings = require('electron-settings');
 
