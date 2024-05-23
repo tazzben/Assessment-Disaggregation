@@ -39,7 +39,7 @@
     "@electron-forge/maker-squirrel": "^7.4.0",
     "@electron-forge/maker-zip": "^7.4.0",
     "@electron/rebuild": "^3.6.0",
-    "electron": "^30.0.6",
+    "electron": "^30.0.7",
     "eslint": "^9.3.0"
   }
 }
