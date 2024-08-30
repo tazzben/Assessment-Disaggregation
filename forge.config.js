@@ -46,21 +46,31 @@ let baseConfig = {
         for (const artifact of result.artifacts) {
           const dirname = path.dirname(artifact);
           const filename = path.basename(artifact);
-          const newFilename = filename.replace(" ", "_");
-          if (!(filename.includes(result.platform))) {
-            const archIndex = newFilename.indexOf(result.arch);
-            if (archIndex !== -1) {
-              newFilename = newFilename.substring(0, archIndex) + result.platform + "-" + newFilename.substring(archIndex + result.arch.length);
+          let newFilename = filename.replace(/\s/, "_");
+          if(!(newFilename.includes(result.arch))){
+            const dashIndex = newFilename.indexOf("-");
+            if (dashIndex !== -1) {
+              newFilename = newFilename.substring(0, dashIndex) + "-" + result.arch + newFilename.substring(dashIndex);
             }
           }
+          if (!(newFilename.includes(result.platform))) {
+            const archIndex = newFilename.indexOf(result.arch);
+            if (archIndex !== -1) {
+              newFilename = newFilename.substring(0, archIndex) + result.platform + "-" + newFilename.substring(archIndex);
+            }
+          }
+          
           const newArtifact = path.join(dirname, newFilename);
           fileRenameList.push({
             artifact,
             newArtifact
           });
-          fs.renameSync(artifact, newArtifact);
+          if (artifact !== newArtifact){
+            fs.renameSync(artifact, newArtifact);
+          }
         }
       }
+      let releaseFileList = [];
       for (const fileRename of fileRenameList) {
         if (path.basename(fileRename.newArtifact) == "RELEASES") {
           let releaseFile = fs.readFileSync(fileRename.newArtifact, 'utf8');
@@ -69,8 +79,17 @@ let baseConfig = {
               releaseFile = releaseFile.replace(path.basename(fR.artifact), path.basename(fR.newArtifact));
             }
           }
+          releaseFileList.push({
+            artifact: fileRename.newArtifact,
+            content: releaseFile
+          });
           fs.writeFileSync(fileRename.newArtifact, releaseFile);
         }
+      }
+      if (releaseFileList.length > 0){
+        const releaseContent = releaseFileList.map(file => file.content).join("\n");
+        const releaseFilePath = path.join(path.dirname(releaseFileList[0].artifact), "..", "RELEASES");
+        fs.writeFileSync(releaseFilePath, releaseContent);
       }
     }
   }
