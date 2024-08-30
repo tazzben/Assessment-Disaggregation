@@ -1,6 +1,6 @@
-const { sign } = require('crypto');
 const os = require('os');
 const path = require('path');
+const fs = require('fs');
 
 require('dotenv').config({
   path: path.join(os.homedir(), ".env")
@@ -38,7 +38,42 @@ let baseConfig = {
         "darwin"
       ]
     },
-  ]
+  ],
+  hooks: {
+    postMake: async (config, makeResults) => {
+      let fileRenameList = [];
+      for (const result of makeResults) {
+        for (const artifact of result.artifacts) {
+          const dirname = path.dirname(artifact);
+          const filename = path.basename(artifact);
+          const newFilename = filename.replace(" ", "_");
+          if (!(filename.includes(result.platform))) {
+            const archIndex = newFilename.indexOf(result.arch);
+            if (archIndex !== -1) {
+              newFilename = newFilename.substring(0, archIndex) + result.platform + "-" + newFilename.substring(archIndex + result.arch.length);
+            }
+          }
+          const newArtifact = path.join(dirname, newFilename);
+          fileRenameList.push({
+            artifact,
+            newArtifact
+          });
+          fs.renameSync(artifact, newArtifact);
+        }
+      }
+      for (const fileRename of fileRenameList) {
+        if (path.basename(fileRename.newArtifact) == "RELEASES") {
+          let releaseFile = fs.readFileSync(fileRename.newArtifact, 'utf8');
+          for (const fR of fileRenameList){
+            if (fR.artifact != fR.newArtifact){
+              releaseFile = releaseFile.replace(path.basename(fR.artifact), path.basename(fR.newArtifact));
+            }
+          }
+          fs.writeFileSync(fileRename.newArtifact, releaseFile);
+        }
+      }
+    }
+  }
 };
 
 module.exports = baseConfig;
