@@ -5,9 +5,9 @@ const {
   Menu,
   dialog,
   shell,
-  TouchBar
+  TouchBar,
+  autoUpdater
 } = require('electron');
-const os = require('os');
 const {
   TouchBarButton,
   TouchBarSpacer
@@ -15,12 +15,15 @@ const {
 
 if (require('electron-squirrel-startup')) app.quit();
 
-// Disable the auto-updated for Windows on ARM
-
-if (process.platform === 'darwin' || (process.platform === 'win32' && os.arch() === 'x64')) {
-  const { updateElectronApp } = require('update-electron-app');
-  updateElectronApp();
-}
+const autoUpdate = () => {
+  if (!(app.isPackaged)){
+    return;
+  }
+  const server = 'https://update.electronjs.org';
+  const feed = `${server}/tazzben/Assessment-Disaggregation/${process.platform}-${process.arch}/${app.getVersion()}`;
+  autoUpdater.setFeedURL(feed);
+  autoUpdater.checkForUpdates();
+};
 
 let settings = require('electron-settings');
 
@@ -140,6 +143,7 @@ const createWindow = () => {
 
   mainWindow.once('ready-to-show', () => { 
     mainWindow.show();
+    autoUpdate();
   });
   
   mainWindow.webContents.once('dom-ready', () => {
