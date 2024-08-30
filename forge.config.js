@@ -75,8 +75,8 @@ let baseConfig = {
       for (const fileRename of fileRenameList) {
         if (path.basename(fileRename.newArtifact) == "RELEASES") {
           let releaseFile = fs.readFileSync(fileRename.newArtifact, 'utf8');
-          filteredFileRenameList = fileRenameList.filter(fR => fR.arch == fileRename.arch && fR.platform == fileRename.platform);
-          for (const fR of filteredFileRenameList){
+          const filFileRenameList = fileRenameList.filter(fR => fR.arch == fileRename.arch && fR.platform == fileRename.platform);
+          for (const fR of filFileRenameList){
             if (fR.artifact != fR.newArtifact){
               releaseFile = releaseFile.replace(path.basename(fR.artifact), path.basename(fR.newArtifact));
             }
