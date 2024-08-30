@@ -59,11 +59,12 @@ let baseConfig = {
               newFilename = newFilename.substring(0, archIndex) + result.platform + "-" + newFilename.substring(archIndex);
             }
           }
-          
           const newArtifact = path.join(dirname, newFilename);
           fileRenameList.push({
             artifact,
-            newArtifact
+            newArtifact,
+            arch: result.arch,
+            platform: result.platform
           });
           if (artifact !== newArtifact){
             fs.renameSync(artifact, newArtifact);
@@ -74,14 +75,18 @@ let baseConfig = {
       for (const fileRename of fileRenameList) {
         if (path.basename(fileRename.newArtifact) == "RELEASES") {
           let releaseFile = fs.readFileSync(fileRename.newArtifact, 'utf8');
+          console.log(fileRenameList);
           for (const fR of fileRenameList){
             if (fR.artifact != fR.newArtifact){
               releaseFile = releaseFile.replace(path.basename(fR.artifact), path.basename(fR.newArtifact));
             }
           }
+          console.log(releaseFile);
           releaseFileList.push({
             artifact: fileRename.newArtifact,
-            content: releaseFile
+            content: releaseFile,
+            arch: fileRename.arch,
+            platform: fileRename.platform
           });
           fs.writeFileSync(fileRename.newArtifact, releaseFile);
         }
@@ -91,6 +96,7 @@ let baseConfig = {
         const releaseFilePath = path.join(path.dirname(releaseFileList[0].artifact), "..", "RELEASES");
         fs.writeFileSync(releaseFilePath, releaseContent);
       }
+      console.log("postMake", fileRenameList);
     }
   }
 };
