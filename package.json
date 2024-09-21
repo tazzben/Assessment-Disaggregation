@@ -34,11 +34,11 @@
     "remove-bom-stream": "^2.0.0"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.4.0",
-    "@electron-forge/maker-squirrel": "^7.4.0",
-    "@electron-forge/maker-zip": "^7.4.0",
+    "@electron-forge/cli": "^7.5.0",
+    "@electron-forge/maker-squirrel": "^7.5.0",
+    "@electron-forge/maker-zip": "^7.5.0",
     "@electron/rebuild": "^3.6.0",
     "electron": "^32.1.2",
-    "eslint": "^9.10.0"
+    "eslint": "^9.11.0"
   }
 }
