@@ -37,7 +37,7 @@
     "@electron-forge/cli": "^7.5.0",
     "@electron-forge/maker-squirrel": "^7.5.0",
     "@electron-forge/maker-zip": "^7.5.0",
-    "@electron/rebuild": "^3.6.0",
+    "@electron/rebuild": "^3.6.1",
     "electron": "^32.1.2",
     "eslint": "^9.11.1"
   }
