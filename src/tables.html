@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
+    <meta name="theme-color" content="#563d7c">
+    <link type="text/css" rel="stylesheet" href="./css/bootstrap.min.css" />
+    <title>Critical Value Tables</title>
+    <style>
+        #body {
+            background-color: #f8f9fa;
+        }
+        .container-fluid {
+            margin-top: 20px;
+        }
+        .row {
+            margin-bottom: 20px;
+        }
+        #tableContents {
+            margin-top: 20px;
+        }
+        #tableContents table {
+            width: 100%;
+        }
+        #tableContents table th {
+            text-align: right;
+        }
+        #tableContents table td {
+            text-align: right;
+        }
+
+    </style>
+
+  </head>
+  <body id="body">
+    
+    <main class="container-fluid">
+        <div class="container-fluid">
+            <div class="row">
+                <h1>Critical Value Tables</h1>
+                <p>The following was producing by simulating the null hypothesis of no learning. These values were created for <a href="#" id="smithwag">Smith and Wagner (2018)</a> and <a href="#" id="smithwhite">Smith and White (2021)</a>. They are repeated here for convenience.</p>
+            </div>
+            <div class="row">
+                <div>
+                    <form id="filterForm" class="form-inline">
+                        <div class="form-group mb-2">
+                            <label for="numOptions" class="mr-2">Number of Options:</label>
+                            <select id="numOptions" class="form-control">
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                            </select>
+                            <label for="estimatorType" class="mr-2">Estimator Type:</label>
+                            <select id="estimatorType" class="form-control">
+                                <option value="Gamma">Gamma (&gamma;)</option>
+                                <option value="GammaGain">Gamma Gain ( &gamma;/(1-&mu;))</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2 ml-3">Show</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row" id="tableContents">
+
+            </div>        
+        </div>
+    </main>
+
+
+    
+
+    <script type="text/javascript" src="./js/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="./js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="./table.js"></script>
+  </body>
+</html>

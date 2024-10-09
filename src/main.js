@@ -31,6 +31,9 @@ const path = require('path');
 const database = require('./dbo.js');
 const csv = require('./readcsv.js');
 const output = require('./output.js');
+const readTables = require('./readTables.js')();
+
+let tableWindow;
 
 let splashScreen;
 
@@ -38,6 +41,33 @@ let data = new database();
 let mainWindow;
 
 let fileState = {};
+
+const createTableWindow = () => {
+  if(!tableWindow || tableWindow.isDestroyed()){
+    tableWindow = new BrowserWindow({
+      show: false,
+      width: 800,
+      height: 600,
+      resizable: true,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+        nodeIntegration: false,
+        contextIsolation: true,
+        enableRemoteModule: false,
+        worldSafeExecuteJavaScript: true,
+        nativeWindowOpen: true
+      }
+    });
+//    tableWindow.webContents.openDevTools();
+    tableWindow.loadFile(path.join(__dirname, 'tables.html'));
+    tableWindow.once('ready-to-show', () => {
+      tableWindow.show();
+    });
+    tableWindow.webContents.once('dom-ready', () => {
+      tableWindow.webContents.send("fromMain", readTables());
+    });
+  }
+};
 
 const createSplash = () => {
   if (!splashScreen || splashScreen.isDestroyed()) {
@@ -554,6 +584,11 @@ const createMenu = async () => {
           click: async () => {
             await shell.openExternal('https://assessmentdisaggregation.org/#zoom')
           }
+        },{
+          label: 'Lookup Critical Values',
+          click: () => {
+            createTableWindow();
+          }
         },
         {
           label: 'Splash Startup',
@@ -626,5 +661,11 @@ ipcMain.on("toMain", (event, args) => {
     if (splashScreen || !splashScreen.isDestroyed()) {
       splashScreen.destroy();
     }
+  }
+  if (args == 'smithwhite'){
+    shell.openExternal('https://doi.org/10.1177/01466216211013905');
+  }
+  if (args == 'smithwag'){
+    shell.openExternal('https://doi.org/10.1080/00220485.2018.1500959');
   }
 });
