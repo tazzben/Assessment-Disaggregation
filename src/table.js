@@ -20,7 +20,7 @@ const drawTable = (data) => {
     table.addClass('table');
     table.addClass('table-striped');
     let headers = Object.keys(data[0]);
-    let headerRow = $('<tr></tr>');
+    let headerRow = $('<thead></thead>').append($('<tr></tr>'));
     headers.forEach(header => {
         if (!(headerIgnore.includes(header))) {
             if (header in headerMap) {
@@ -31,7 +31,7 @@ const drawTable = (data) => {
         } 
     });
     table.append(headerRow);
-
+    let body = $('<tbody></tbody>');
     data.forEach(row => {
         let tableRow = $('<tr></tr>');
         headers.forEach(header => {
@@ -43,7 +43,8 @@ const drawTable = (data) => {
                 tableRow.append($('<td></td>').text(cellValue));
             }
         });
-        table.append(tableRow);
+        body.append(tableRow);
+        table.append(body);
     });
     $('#tableContents').empty();
     $('#tableContents').append(table);
