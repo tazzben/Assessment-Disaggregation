@@ -25,7 +25,7 @@
     "forge": "./forge.config.js"
   },
   "dependencies": {
-    "better-sqlite3": "^11.7.2",
+    "better-sqlite3": "^11.8.0",
     "csv-parser": "^3.1.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.4.7",
@@ -38,7 +38,7 @@
     "@electron-forge/maker-squirrel": "^7.6.0",
     "@electron-forge/maker-zip": "^7.6.0",
     "@electron/rebuild": "^3.7.1",
-    "electron": "^33.3.1",
+    "electron": "^34.0.0",
     "eslint": "^9.18.0"
   }
 }
