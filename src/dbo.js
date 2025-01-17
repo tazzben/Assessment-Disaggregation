@@ -3,6 +3,7 @@ let dS = class dataStorage {
   constructor() {
     const Database = require('better-sqlite3');
     let db = new Database(':memory:');
+    db.pragma('journal_mode = WAL');
     const creationList = ['create table if not exists questions (exam int, id int, question_num int, correct int, UNIQUE(exam, id, question_num) ON CONFLICT REPLACE);',
       'create table if not exists assessment (question_num int, exam1 int, exam2 int, distractors real, generated int DEFAULT 0, UNIQUE(question_num) ON CONFLICT REPLACE);',
       'create table if not exists student_list (id int, generated int DEFAULT 0, UNIQUE(id) ON CONFLICT REPLACE);'
