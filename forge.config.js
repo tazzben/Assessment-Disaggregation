@@ -74,7 +74,7 @@ let baseConfig = {
       let releaseFileList = [];
       for (const fileRename of fileRenameList) {
         if (path.basename(fileRename.newArtifact) == "RELEASES") {
-          let releaseFile = fs.readFileSync(fileRename.newArtifact, 'utf8');
+          let releaseFile = fs.readFileSync(fileRename.newArtifact, 'utf8').replace(/[\r]+/g, '');
           const filFileRenameList = fileRenameList.filter(fR => fR.arch == fileRename.arch && fR.platform == fileRename.platform);
           for (const fR of filFileRenameList){
             if (fR.artifact != fR.newArtifact){
@@ -91,7 +91,9 @@ let baseConfig = {
         }
       }
       if (releaseFileList.length > 0){
-        const releaseContent = releaseFileList.map(file => file.content).join("\n");
+        const releaseContent = releaseFileList
+          .map(file => file.content.replace(/[\r\n]+/g, ''))
+          .join("\n");
         const releaseFilePath = path.join(path.dirname(releaseFileList[0].artifact), "..", "RELEASES");
         fs.writeFileSync(releaseFilePath, releaseContent);
       }
