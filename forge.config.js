@@ -95,7 +95,7 @@ let baseConfig = {
           .map(file => file.content.replace(/[\r\n]+/g, ''))
           .join("\n");
         const releaseFilePath = path.join(path.dirname(releaseFileList[0].artifact), "..", "RELEASES");
-        fs.writeFileSync(releaseFilePath, releaseContent);
+        fs.writeFileSync(releaseFilePath, releaseContent + "\n");
       }
       const filteredFileRenameList = fileRenameList.filter(fR => path.basename(fR.newArtifact) != "RELEASES");
       for (const fR of filteredFileRenameList){
