@@ -74,7 +74,7 @@ let baseConfig = {
       let releaseFileList = [];
       for (const fileRename of fileRenameList) {
         if (path.basename(fileRename.newArtifact) == "RELEASES") {
-          let releaseFile = fs.readFileSync(fileRename.newArtifact, 'utf8').replace(/[\r]+/g, '');
+          let releaseFile = fs.readFileSync(fileRename.newArtifact, { encoding: 'utf8', flag: 'r' }).replace(/[\r]+/g, '').trim();
           const filFileRenameList = fileRenameList.filter(fR => fR.arch == fileRename.arch && fR.platform == fileRename.platform);
           for (const fR of filFileRenameList){
             if (fR.artifact != fR.newArtifact){
@@ -87,7 +87,7 @@ let baseConfig = {
             arch: fileRename.arch,
             platform: fileRename.platform
           });
-          fs.writeFileSync(fileRename.newArtifact, releaseFile);
+          fs.writeFileSync(fileRename.newArtifact, releaseFile, { encoding: 'utf8', flag: 'w' });
         }
       }
       if (releaseFileList.length > 0){
@@ -95,7 +95,7 @@ let baseConfig = {
           .map(file => file.content.replace(/[\r\n]+/g, ''))
           .join("\n");
         const releaseFilePath = path.join(path.dirname(releaseFileList[0].artifact), "..", "RELEASES");
-        fs.writeFileSync(releaseFilePath, releaseContent + "\n");
+        fs.writeFileSync(releaseFilePath, releaseContent + "\n", { encoding: 'utf8', flag: 'w' });
       }
       const filteredFileRenameList = fileRenameList.filter(fR => path.basename(fR.newArtifact) != "RELEASES");
       for (const fR of filteredFileRenameList){
