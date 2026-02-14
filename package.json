@@ -28,7 +28,7 @@
     "better-sqlite3": "^12.6.2",
     "csv-parser": "^3.2.0",
     "csv-writer": "^1.6.0",
-    "dotenv": "^17.2.4",
+    "dotenv": "^17.3.1",
     "electron-settings": "^4.0.4",
     "electron-squirrel-startup": "^1.0.1",
     "remove-bom-stream": "^2.0.0"
@@ -38,7 +38,7 @@
     "@electron-forge/maker-squirrel": "^7.11.1",
     "@electron-forge/maker-zip": "^7.11.1",
     "@electron/rebuild": "^4.0.3",
-    "electron": "^40.2.1",
-    "eslint": "^9.39.2"
+    "electron": "^40.4.1",
+    "eslint": "^10.0.0"
   }
 }
