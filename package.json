@@ -43,6 +43,6 @@
   },
   "allowScripts": {
     "better-sqlite3@12.11.1": true,
-    "electron-winstaller@5.4.1": true
+    "electron-winstaller@5.4.4": true
   }
 }
