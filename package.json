@@ -25,7 +25,7 @@
     "forge": "./forge.config.js"
   },
   "dependencies": {
-    "better-sqlite3": "^12.11.1",
+    "better-sqlite3": "^13.0.1",
     "csv-parser": "^3.2.1",
     "csv-writer": "^1.6.0",
     "dotenv": "^17.4.2",
@@ -42,7 +42,7 @@
     "eslint": "^10.7.0"
   },
   "allowScripts": {
-    "better-sqlite3@12.11.1": true,
-    "electron-winstaller@5.4.4": true
+    "electron-winstaller@5.4.4": true,
+    "better-sqlite3@13.0.1": true
   }
 }
