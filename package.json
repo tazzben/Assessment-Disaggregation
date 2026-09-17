@@ -38,8 +38,8 @@
     "@electron-forge/maker-squirrel": "^7.11.2",
     "@electron-forge/maker-zip": "^7.11.2",
     "@electron/rebuild": "^4.2.0",
-    "electron": "^43.2.0",
-    "eslint": "^10.8.0"
+    "electron": "^44.4.1",
+    "eslint": "^10.10.0"
   },
   "allowScripts": {
     "electron-winstaller@5.4.4": true,
