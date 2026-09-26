@@ -4,6 +4,26 @@ const stripBom = require('remove-bom-stream');
 const path = require('path');
 
 
+
+const getColumnIndex = (header, columnName) => header.findIndex((value) => value.trim() === columnName);
+
+const findColumnIndexInRange = (header, columnName, startIndex, endIndex) => {
+    for (let index = startIndex; index < endIndex; index += 1) {
+        if (header[index].trim() === columnName) {
+            return index;
+        }
+    }
+    return -1;
+};
+
+const isBlankRow = (row) => row.every((value) => String(value ?? '').trim() === '');
+
+const getNumericValue = (value) => {
+    const parsedValue = Number(String(value ?? '').trim());
+    return Number.isFinite(parsedValue) ? parsedValue : null;
+};
+
+
 const stringToNumber = (stringName) => {
     let hash = 0,
         i, chr;
@@ -14,6 +34,8 @@ const stringToNumber = (stringName) => {
     }
     return hash;
 };
+
+
 
 const readStudentIds = (db, filename, callback) => {
     callback = callback || function () {};
@@ -131,7 +153,8 @@ const detectFormat = (filename, callback) => {
                     sisidColumn,
                     zipgradeColumn,
                     googleQuiz,
-                    questionID
+                    questionID,
+                    itemID
                 } = detectColumns(header);
                 let fullSet = [];
 
@@ -139,8 +162,10 @@ const detectFormat = (filename, callback) => {
                     fullSet = results;
                     fullSet.splice(0, 1);
                 }
+                fullset = fullSet.filter((row) => !isBlankRow(row));
 
                 const scantronData = scantron ? fullSet : [];
+                const canvasNewQuizzesData = (itemID !== false && (idColumn !== false || sisidColumn !== false)) ? fullSet : [];
                 const canvasData = (attemptColumn !== false && (idColumn !== false || sisidColumn !== false)) ? fullSet : [];
                 callback({
                     scantron: scantron,
@@ -155,13 +180,74 @@ const detectFormat = (filename, callback) => {
                     sisidColumn: sisidColumn,
                     zipgradeColumn: zipgradeColumn,
                     googleQuiz: googleQuiz,
-                    questionID: questionID
+                    questionID: questionID,
+                    itemID: itemID,
+                    canvasNewQuizzesData: canvasNewQuizzesData
                 });
             } else {
                 callback({});
             }
         });
 };
+
+
+
+
+
+const processCanvasNewQuizzes = (db, exam, header, data, idColumn, sisidColumn) => {
+    let success = false;
+    const studentIdIndex = getColumnIndex(header, 'ID');
+    const attemptIndex = getColumnIndex(header, 'Attempt');
+    const firstItemIndex = header.findIndex((value, index) => index > attemptIndex && value.trim() === 'ItemID');
+    const summaryIndex = getColumnIndex(header, 'NumberOfCorrect');
+    const attemptOneData = data.filter((row) => String(row[attemptIndex] ?? '').trim() === '1');
+    if (studentIdIndex === -1 || attemptIndex === -1) {
+        throw new Error('This CSV does not include the required ID and Attempt columns.');
+    }
+    if (firstItemIndex === -1 || summaryIndex === -1 || summaryIndex <= firstItemIndex) {
+        throw new Error('No Canvas New Quizzes item columns were found in this CSV.');
+    }
+
+    // Locate each repeated item block by its 'ItemID' column, so extra columns Canvas adds between blocks don't shift the offsets.
+    const itemIdIndexes = [];
+    for (let index = firstItemIndex; index < summaryIndex; index += 1) {
+        if (header[index].trim() === 'ItemID') {
+            itemIdIndexes.push(index);
+        }
+    }
+
+    if (itemIdIndexes.length === 0) {
+        throw new Error('No Canvas New Quizzes item columns were found in this CSV.');
+    }
+    
+    for (const row of attemptOneData) {
+        const id = (Number.isInteger(Number(row[sisidColumn])) && Number(row[sisidColumn]) > 0) ? Number(row[sisidColumn]) : Number(row[idColumn]);
+        if (id > 0) {
+            for (let blockIndex = 0; blockIndex < itemIdIndexes.length; blockIndex += 1) {
+                
+                // Questions: Are itemID blocks orders always match question order? What exactly are the friendly names?
+                // 
+                const questionNumber = blockIndex + 1;
+                const itemIdIndex = itemIdIndexes[blockIndex];
+                const blockEnd = itemIdIndexes[blockIndex + 1] ?? summaryIndex;
+                const earnedPointsIndex = findColumnIndexInRange(header, 'EarnedPoints', itemIdIndex + 1, blockEnd);
+                const statusIndex = findColumnIndexInRange(header, 'Status', itemIdIndex + 1, blockEnd);
+                const possibleFriendlyName = header[itemIdIndex + 2] ?? '';
+                const itemIdValue = String(row[itemIdIndex] ?? '').trim();
+                const earnedPoints = earnedPointsIndex === -1 ? null : getNumericValue(row[earnedPointsIndex]);
+                const status = statusIndex === -1 ? '' : String(row[statusIndex] ?? '').trim();
+                if (!itemIdValue || earnedPoints === null || status !== 'Graded') {
+                    continue;
+                }
+                const correct = earnedPoints > 0 ? 1 : 0;
+                db.insertExamRecord(exam, id, questionNumber, correct);
+                success = true;
+            }
+        }
+    }
+    return success;
+};
+
 
 const processCanvasData = (db, exam, header, data, attempt, idColumn, sisidColumn) => {
     let firstQuestion = Number(attempt) + 2;
@@ -377,6 +463,7 @@ const detectColumns = (header) => {
     let zipgradeColumn = false;
     let googleQuiz = false;
     let questionID = false;
+    let itemID = false;
     const regularExpressionTest = /^(q[.]?\s*)([\d]+\b)/i;
     const googleQuizTest = /\[score\]$/i;
     for (let [key, value] of Object.entries(header)) {
@@ -397,6 +484,9 @@ const detectColumns = (header) => {
         if (value.toLowerCase() === 'id') {
             idColumn = key;
         }
+        if (value.toLowerCase() === 'itemid') {
+            itemID = true;
+        }
         if (value.toLowerCase() === 'question id') {
             questionID = true;
         }
@@ -415,7 +505,8 @@ const detectColumns = (header) => {
         sisidColumn: sisidColumn,
         zipgradeColumn: zipgradeColumn,
         googleQuiz: googleQuiz,
-        questionID: questionID
+        questionID: questionID,
+        itemID: itemID
     };
 };
 
@@ -479,7 +570,9 @@ const processExamFile = (db, filename, exam, callback) => {
             sisidColumn,
             zipgradeColumn,
             googleQuiz,
-            questionID
+            questionID,
+            itemID,
+            canvasNewQuizzesData
         } = robj;
 
         if ((scantron && scantronKey.length > 0) || questionColumns || canvasData.length > 0 || googleQuiz || questionID) {
@@ -490,6 +583,9 @@ const processExamFile = (db, filename, exam, callback) => {
             OutcomeFunc(outcome);
         } else if (questionColumns) {
             processColumnData(db, exam, filename, altgrading, zipgradeColumn, OutcomeFunc);
+        } else if (canvasNewQuizzesData.length > 0) {
+            let outcome = processCanvasNewQuizzes(db, exam, header, canvasNewQuizzesData, idColumn, sisidColumn);
+            OutcomeFunc(outcome);
         } else if (canvasData.length > 0) {
             let outcome = processCanvasData(db, exam, header, canvasData, attemptColumn, idColumn, sisidColumn);
             OutcomeFunc(outcome);
