@@ -1,7 +1,7 @@
 {
   "name": "assessment-disaggregation",
   "productName": "Assessment Disaggregation",
-  "version": "1.7.4",
+  "version": "1.8.0",
   "description": "Measure learning using a scientifically validated method using pretest and posttest files. The software automatically reads most exam output files (Akindi, Scantron, Canvas, ZipGrade, Moodle, Google Form quizzes) without modification.",
   "main": "src/main.js",
   "repository": {
@@ -28,7 +28,7 @@
     "better-sqlite3": "^13.0.2",
     "csv-parser": "^3.2.1",
     "csv-writer": "^1.6.0",
-    "dotenv": "^17.4.2",
+    "dotenv": "^18.0.4",
     "electron-settings": "^4.0.4",
     "electron-squirrel-startup": "^1.0.1",
     "remove-bom-stream": "^2.0.0"
@@ -38,11 +38,11 @@
     "@electron-forge/maker-squirrel": "^7.11.2",
     "@electron-forge/maker-zip": "^7.11.2",
     "@electron/rebuild": "^4.2.0",
-    "electron": "^44.4.1",
-    "eslint": "^10.10.0"
+    "electron": "^44.4.5",
+    "eslint": "^10.11.0"
   },
   "allowScripts": {
     "electron-winstaller@5.4.4": true,
-    "better-sqlite3@13.0.2": true
+    "better-sqlite3@13.0.3": true
   }
 }

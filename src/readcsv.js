@@ -16,7 +16,7 @@ const findColumnIndexInRange = (header, columnName, startIndex, endIndex) => {
     return -1;
 };
 
-const isBlankRow = (row) => row.every((value) => String(value ?? '').trim() === '');
+// const isBlankRow = (row) => row.every((value) => String(value ?? '').trim() === '');
 
 const getNumericValue = (value) => {
     const parsedValue = Number(String(value ?? '').trim());
@@ -162,7 +162,7 @@ const detectFormat = (filename, callback) => {
                     fullSet = results;
                     fullSet.splice(0, 1);
                 }
-                fullset = fullSet.filter((row) => !isBlankRow(row));
+//                fullSet = fullSet.filter((row) => !isBlankRow(row));
 
                 const scantronData = scantron ? fullSet : [];
                 const canvasNewQuizzesData = (itemID !== false && (idColumn !== false || sisidColumn !== false)) ? fullSet : [];
@@ -196,10 +196,18 @@ const detectFormat = (filename, callback) => {
 
 const processCanvasNewQuizzes = (db, exam, header, data, idColumn, sisidColumn) => {
     let success = false;
-    const studentIdIndex = getColumnIndex(header, 'ID');
-    const attemptIndex = getColumnIndex(header, 'Attempt');
-    const firstItemIndex = header.findIndex((value, index) => index > attemptIndex && value.trim() === 'ItemID');
-    const summaryIndex = getColumnIndex(header, 'NumberOfCorrect');
+
+    const sortedHeaderObject = Object.keys(header).sort().reduce((accumulator, key) => {
+        accumulator[key] = header[key];
+        return accumulator;
+    }, {});
+    const sortedHeader = Object.values(sortedHeaderObject);
+
+    const studentIdIndex = getColumnIndex(sortedHeader, 'ID');
+    const attemptIndex = getColumnIndex(sortedHeader, 'Attempt');
+    
+    const firstItemIndex = sortedHeader.findIndex((value, index) => index > attemptIndex && value.trim() === 'ItemID');
+    const summaryIndex = getColumnIndex(sortedHeader, 'NumberOfCorrect');
     const attemptOneData = data.filter((row) => String(row[attemptIndex] ?? '').trim() === '1');
     if (studentIdIndex === -1 || attemptIndex === -1) {
         throw new Error('This CSV does not include the required ID and Attempt columns.');
@@ -211,7 +219,7 @@ const processCanvasNewQuizzes = (db, exam, header, data, idColumn, sisidColumn) 
     // Locate each repeated item block by its 'ItemID' column, so extra columns Canvas adds between blocks don't shift the offsets.
     const itemIdIndexes = [];
     for (let index = firstItemIndex; index < summaryIndex; index += 1) {
-        if (header[index].trim() === 'ItemID') {
+        if (sortedHeader[index].trim() === 'ItemID') {
             itemIdIndexes.push(index);
         }
     }
@@ -230,9 +238,9 @@ const processCanvasNewQuizzes = (db, exam, header, data, idColumn, sisidColumn) 
                 const questionNumber = blockIndex + 1;
                 const itemIdIndex = itemIdIndexes[blockIndex];
                 const blockEnd = itemIdIndexes[blockIndex + 1] ?? summaryIndex;
-                const earnedPointsIndex = findColumnIndexInRange(header, 'EarnedPoints', itemIdIndex + 1, blockEnd);
-                const statusIndex = findColumnIndexInRange(header, 'Status', itemIdIndex + 1, blockEnd);
-                const possibleFriendlyName = header[itemIdIndex + 2] ?? '';
+                const earnedPointsIndex = findColumnIndexInRange(sortedHeader, 'EarnedPoints', itemIdIndex + 1, blockEnd);
+                const statusIndex = findColumnIndexInRange(sortedHeader, 'Status', itemIdIndex + 1, blockEnd);
+                const possibleFriendlyName = sortedHeader[itemIdIndex + 2] ?? '';
                 const itemIdValue = String(row[itemIdIndex] ?? '').trim();
                 const earnedPoints = earnedPointsIndex === -1 ? null : getNumericValue(row[earnedPointsIndex]);
                 const status = statusIndex === -1 ? '' : String(row[statusIndex] ?? '').trim();
