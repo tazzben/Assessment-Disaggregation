@@ -240,7 +240,7 @@ const processCanvasNewQuizzes = (db, exam, header, data, idColumn, sisidColumn) 
                 const blockEnd = itemIdIndexes[blockIndex + 1] ?? summaryIndex;
                 const earnedPointsIndex = findColumnIndexInRange(sortedHeader, 'EarnedPoints', itemIdIndex + 1, blockEnd);
                 const statusIndex = findColumnIndexInRange(sortedHeader, 'Status', itemIdIndex + 1, blockEnd);
-                const possibleFriendlyName = sortedHeader[itemIdIndex + 2] ?? '';
+//                const possibleFriendlyName = sortedHeader[itemIdIndex + 2] ?? '';
                 const itemIdValue = String(row[itemIdIndex] ?? '').trim();
                 const earnedPoints = earnedPointsIndex === -1 ? null : getNumericValue(row[earnedPointsIndex]);
                 const status = statusIndex === -1 ? '' : String(row[statusIndex] ?? '').trim();
