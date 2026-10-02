@@ -5,8 +5,18 @@ const fs = require('fs');
 require('dotenv').config({
   path: path.join(os.homedir(), ".env")
 });
+const windowsSign = {
+  automaticallySelectCertificate: true,
+  timestampServer: "http://timestamp.sectigo.com",
+  hashes: ["sha256"],
+  debug: true,
+  ...(process.env.WINDOWS_CERT_SHA1 && {
+    signWithParams: ["/sha1", process.env.WINDOWS_CERT_SHA1]
+  })
+};
 let baseConfig = {
   packagerConfig: {
+    windowsSign,
     icon: "./src/icons/icon.icns",
     appBundleId: "com.bensresearch.assessmentdisaggregation",
     appCategoryType: "public.app-category.education",
@@ -26,7 +36,7 @@ let baseConfig = {
   makers: [{
       name: "@electron-forge/maker-squirrel",
       config: {
-        signWithParams: '/a /tr http://timestamp.sectigo.com /td sha256 /fd sha256'
+        windowsSign
       },
       platforms: [
         "win32"
