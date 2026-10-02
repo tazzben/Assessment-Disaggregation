@@ -6,12 +6,16 @@ require('dotenv').config({
   path: path.join(os.homedir(), ".env")
 });
 const windowsSign = {
-  automaticallySelectCertificate: true,
+  automaticallySelectCertificate: !process.env.WINDOWS_CERT_SHA1,
   timestampServer: "http://timestamp.sectigo.com",
   hashes: ["sha256"],
   debug: true,
   ...(process.env.WINDOWS_CERT_SHA1 && {
-    signWithParams: ["/sha1", process.env.WINDOWS_CERT_SHA1]
+    signWithParams: [
+      "/sha1", process.env.WINDOWS_CERT_SHA1,
+      "/csp", "SafeNet Smart Card Key Storage Provider",
+      "/kc", "Sectigo_20240424150144"
+    ]
   })
 };
 let baseConfig = {
