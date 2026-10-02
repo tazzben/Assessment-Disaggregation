@@ -17,6 +17,16 @@ const windowsSign = {
 let baseConfig = {
   packagerConfig: {
     windowsSign,
+    afterCopy: [async ({ buildPath, platform }) => {
+      // Non-target prebuilds can't be signed (signtool errors) and bloat the app.
+      const prebuildsDir = path.join(buildPath, "node_modules", "better-sqlite3", "prebuilds");
+      if (!fs.existsSync(prebuildsDir)) return;
+      for (const entry of fs.readdirSync(prebuildsDir)) {
+        if (!entry.startsWith(platform + "-")) {
+          fs.rmSync(path.join(prebuildsDir, entry), { recursive: true, force: true });
+        }
+      }
+    }],
     icon: "./src/icons/icon.icns",
     appBundleId: "com.bensresearch.assessmentdisaggregation",
     appCategoryType: "public.app-category.education",
