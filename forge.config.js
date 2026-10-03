@@ -11,11 +11,10 @@ const windowsSign = {
   hashes: ["sha256"],
   debug: true,
   ...(process.env.WINDOWS_CERT_SHA1 && {
-    signWithParams: [
-      "/sha1", process.env.WINDOWS_CERT_SHA1,
-      "/csp", "SafeNet Smart Card Key Storage Provider",
-      "/kc", "Sectigo_20240424150144"
-    ]
+    signWithParams: ["/sha1", process.env.WINDOWS_CERT_SHA1]
+  }),
+  ...(process.env.WINDOWS_SIGNTOOL_PATH && {
+    signToolPath: process.env.WINDOWS_SIGNTOOL_PATH
   })
 };
 let baseConfig = {
