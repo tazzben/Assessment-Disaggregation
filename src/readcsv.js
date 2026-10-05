@@ -41,7 +41,7 @@ const readStudentIds = (db, filename, callback) => {
     callback = callback || function () {};
     let results = [];
     let success = false;
-    const headers = ['id', 'student id', 'external id', 'zipgrade id', 'ids', 'sis_id', 'id number'];
+    const headers = ['id', 'student id', 'external id', 'zipgrade id', 'ids', 'sis_id', 'sisid', 'id number'];
     fs.createReadStream(filename)
         .pipe(stripBom('utf-8'))
         .pipe(csv({
@@ -265,9 +265,9 @@ const processCanvasData = (db, exam, header, data, attempt, idColumn, sisidColum
             lastQuestion = Number(key);
         }
     }
+    const attemptOneData = data.filter((row) => String(row[attempt] ?? '').trim() === '1');
     let success = false;
-    data.forEach(function (row) {
-
+    attemptOneData.forEach(function (row) {
         let id = (Number.isInteger(Number(row[sisidColumn])) && Number(row[sisidColumn]) > 0) ? Number(row[sisidColumn]) : Number(row[idColumn]);
 
         let question = 1;
@@ -309,7 +309,7 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
     callback = callback || function () {};
     let correctTest = ['a', 'b', 'c', 'd', 'e'];
     let results = [];
-    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sis_id'];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sisid', 'sis_id'];
     let success = false;
     fs.createReadStream(filename)
         .pipe(stripBom('utf-8'))
@@ -355,7 +355,7 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
 const processGoogleQuizData = (db, exam, filename, callback) => {
     callback = callback || function () {};
     let results = [];
-    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sis_id'];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sisid', 'sis_id'];
     let usernameKeys = ['username', 'usernames'];
     let success = false;
     fs.createReadStream(filename)
@@ -407,7 +407,7 @@ const processGoogleQuizData = (db, exam, filename, callback) => {
 const processBlackboardData = (db, exam, filename, callback) => {
     callback = callback || function () {};
     let results = [];
-    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sis_id'];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sisid', 'sis_id'];
     let usernameKeys = ['username', 'usernames'];
     let success = false;
     fs.createReadStream(filename)
@@ -497,6 +497,9 @@ const detectColumns = (header) => {
         }
         if (value.toLowerCase() === 'question id') {
             questionID = true;
+        }
+        if (value.toLowerCase() === 'sisid') {
+            sisidColumn = key;
         }
         if (value.toLowerCase() === 'sis_id') {
             sisidColumn = key;
