@@ -41,7 +41,7 @@ const readStudentIds = (db, filename, callback) => {
     callback = callback || function () {};
     let results = [];
     let success = false;
-    const headers = ['id', 'student id', 'external id', 'zipgrade id', 'ids', 'sis_id', 'sisid', 'id number'];
+    const headers = ['id', 'student id', 'external id', 'zipgrade id', 'ids', 'sisid', 'sis id', 'sis_id', 'id number', 'idnumber'];
     fs.createReadStream(filename)
         .pipe(stripBom('utf-8'))
         .pipe(csv({
@@ -309,7 +309,7 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
     callback = callback || function () {};
     let correctTest = ['a', 'b', 'c', 'd', 'e'];
     let results = [];
-    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sisid', 'sis_id'];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'idnumber', 'ids', 'sisid', 'sis id', 'sis_id'];
     let success = false;
     fs.createReadStream(filename)
         .pipe(stripBom('utf-8'))
@@ -355,7 +355,7 @@ const processColumnData = (db, exam, filename, altgrading, zipgradeColumn, callb
 const processGoogleQuizData = (db, exam, filename, callback) => {
     callback = callback || function () {};
     let results = [];
-    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sisid', 'sis_id'];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'idnumber', 'ids', 'sisid', 'sis id', 'sis_id'];
     let usernameKeys = ['username', 'usernames'];
     let success = false;
     fs.createReadStream(filename)
@@ -407,7 +407,7 @@ const processGoogleQuizData = (db, exam, filename, callback) => {
 const processBlackboardData = (db, exam, filename, callback) => {
     callback = callback || function () {};
     let results = [];
-    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'ids', 'sisid', 'sis_id'];
+    let idKeys = ['id', 'student id', 'external id', 'zipgrade id', 'id number', 'idnumber', 'ids', 'sisid', 'sis id', 'sis_id'];
     let usernameKeys = ['username', 'usernames'];
     let success = false;
     fs.createReadStream(filename)
@@ -499,6 +499,9 @@ const detectColumns = (header) => {
             questionID = true;
         }
         if (value.toLowerCase() === 'sisid') {
+            sisidColumn = key;
+        }
+        if (value.toLowerCase() === 'sis id') {
             sisidColumn = key;
         }
         if (value.toLowerCase() === 'sis_id') {
